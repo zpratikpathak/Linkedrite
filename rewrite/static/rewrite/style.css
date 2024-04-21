@@ -14,6 +14,11 @@ body {
   font-optical-sizing: auto;
   font-weight: 14;
   font-style: normal;
+  /* display: grid; */
+  place-content: center;
+  min-height: 95vh;
+  /* hide y axis overflow */
+  /* overflow-y: hidden; */
 }
 
 .post-box {
@@ -48,6 +53,9 @@ body {
     color: #666;
   }
 
+  .input-area {
+    padding-right: 20px;
+  }
   textarea {
     width: 100%;
     height: 120px;

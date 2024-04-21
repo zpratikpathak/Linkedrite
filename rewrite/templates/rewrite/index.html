@@ -76,7 +76,7 @@
           postInput.placeholder = currentText;
         } else {
           postInput.value = currentText;
-          postInput.rows = postInput.value.split("\n").length; // Adjust the rows attribute based on the number of lines in the textarea
+          postInput.style.height = postInput.scrollHeight + "px"; // Adjust the height based on the scrollHeight
         }
         i++;
         if (i > responseAI.length) {
