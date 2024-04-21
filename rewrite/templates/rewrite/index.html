@@ -1,0 +1,43 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static './rewrite/style.css' %}" />
+  </head>
+  <body>
+    <div class="post-box">
+      <div class="header">
+        <img
+          src="{% static './rewrite/profile.png'%}"
+          alt="Profile Picture"
+          class="profile-pic"
+        />
+        <span class="name">LinkedIn Rewrite</span>
+        <span class="privacy">Post to Anyone</span>
+      </div>
+      <div class="input-area">
+        <form action="" method="post">
+          {% csrf_token %}
+          <textarea
+            placeholder="What do you want to talk about?"
+            id="postInput"
+            name="postInput"
+          ></textarea>
+          <div class="actions">
+            <button id="emoji-btn">😀</button>
+            <button id="rewrite-btn" type="submit">Rewrite with AI</button>
+            <button id="doc-btn">&#128196;</button>
+            <button id="robot-btn">&#128420;</button>
+            <button id="add-btn">+</button>
+            <button id="post-btn" disabled>Post</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+  <script src="{% static './rewrite/script.js'%}"></script>
+</html>
