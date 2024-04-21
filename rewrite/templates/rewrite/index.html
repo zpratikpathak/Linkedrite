@@ -66,6 +66,30 @@
   </body>
 
   <script>
+    function writeText(text, placeholder = false) {
+  const responseAI = text;
+  const postInput = document.getElementById("postInput");
+  let i = 0;
+  if (placeholder) {
+    postInput.value = ""; // Clear the input box
+  }
+  const typingEffect = setInterval(() => {
+    const currentText = responseAI.slice(0, i);
+    if (placeholder) {
+      postInput.placeholder = currentText;
+    } else {
+      postInput.value = currentText;
+      postInput.rows = postInput.value.split("\n").length; // Adjust the rows attribute based on the number of lines in the textarea
+    }
+    i++;
+    if (i > responseAI.length) {
+      clearInterval(typingEffect);
+    }
+  }, 30);
+
+}
+
+
     function sendData() {
       var postInput = document.getElementById("postInput").value;
       var emojiNeeded = document.getElementById("emojiNeeded").checked;
@@ -74,6 +98,13 @@
         postInput: postInput,
         emojiNeeded: emojiNeeded,
       };
+
+      // if length of postInput is less than 10, then ask user to enter more data
+      if (postInput.length < 10) {
+        const responseAI = "Please write more to generate a professional response";
+        writeText(responseAI, true);
+        return;
+      }
 
       fetch("{% url 'rewrite' %}", {
         method: "POST",
@@ -90,16 +121,7 @@
           console.log("data:", data);
           // Handle the response from the server
           const responseAI = data.rewriteAI;
-          const postInput = document.getElementById("postInput");
-          let i = 0;
-          const typingEffect = setInterval(() => {
-            postInput.value = responseAI.slice(0, i);
-            postInput.rows = postInput.value.split("\n").length; // Adjust the rows attribute based on the number of lines in the textarea
-            i++;
-            if (i > responseAI.length) {
-              clearInterval(typingEffect);
-            }
-          }, 30);
+          writeText(responseAI);
 
           // Handle the response from the server
         })
