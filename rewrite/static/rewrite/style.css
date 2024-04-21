@@ -61,8 +61,20 @@ body {
 
   .actions {
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     margin-top: 10px;
+  }
+
+  .actionButton {
+    display: flex;
+  }
+
+  /* .actionButton button {
+    margin-right: 2px;
+  } */
+
+  .button-group button:last-child {
+    margin-right: 0;
   }
 
   .actions button {
@@ -162,6 +174,13 @@ body {
     /* background-color: rgb(0, 0, 0); */
   }
 
-.rewriteButton {
-  justify-content: flex-end;
+
+
+
+@media (max-width: 768px) {
+  .actions{
+    flex-direction: column;
+    align-items: center;
+  }
+
 }

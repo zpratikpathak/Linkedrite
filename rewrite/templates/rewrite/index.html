@@ -26,10 +26,22 @@
           name="postInput"
         ></textarea>
         <div class="actions">
+          <div class="actionButton">
           <div class="checkbox-con">
             <input id="emojiNeeded" type="checkbox" />😀
           </div>
           <!-- <button id="emoji-btn">😀</button> -->
+          
+        </div>
+        <div class="actionButton">
+          <button
+            id="robot-btn"
+            onclick="window.open('https://github.com/zpratikpathak')"
+          >
+            &#128420;
+          </button>
+          <button id="add-btn">#</button>
+          <!-- <button id="post-btn" disabled>Post</button> -->
           <button id="doc-btn" onclick="copyText()">
             Copy&nbsp;
             <span class="svgIcon"></span>
@@ -46,17 +58,8 @@
               </span>
             </svg>
           </button>
-          <button
-            id="robot-btn"
-            onclick="window.open('https://github.com/zpratikpathak')"
-          >
-            &#128420;
-          </button>
-          <button id="add-btn">+</button>
-          <!-- <button id="post-btn" disabled>Post</button> -->
-          
           <button id="rewrite-btn" type="submit">Rewrite with AI✨</button>
-        
+        </div>
         </div>
       </div>
     </div>
