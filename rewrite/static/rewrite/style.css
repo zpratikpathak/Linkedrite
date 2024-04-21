@@ -7,6 +7,15 @@
     background-color: #f0f0f0
 } */
 
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
+
+body {
+  font-family: "Source Sans 3", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 14;
+  font-style: normal;
+}
+
 .post-box {
     
     max-width: 800px;
@@ -52,7 +61,7 @@
 
   .actions {
     display: flex;
-    justify-content: flex-end;
+    justify-content: flex-start;
     margin-top: 10px;
   }
 
@@ -143,3 +152,16 @@
     user-select: none;
    }
    
+   #doc-btn {
+    /* width: 35%; */
+    /* height: 100%; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* color: rgb(233, 11, 11); */
+    /* background-color: rgb(0, 0, 0); */
+  }
+
+.rewriteButton {
+  justify-content: flex-end;
+}
