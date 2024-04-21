@@ -20,24 +20,75 @@
         <span class="privacy">Post to Anyone</span>
       </div>
       <div class="input-area">
-        <form action="" method="post">
-          {% csrf_token %}
-          <textarea
-            placeholder="What do you want to talk about?"
-            id="postInput"
-            name="postInput"
-          ></textarea>
-          <div class="actions">
-            <button id="emoji-btn">😀</button>
-            <button id="rewrite-btn" type="submit">Rewrite with AI</button>
-            <button id="doc-btn">&#128196;</button>
-            <button id="robot-btn">&#128420;</button>
-            <button id="add-btn">+</button>
-            <button id="post-btn" disabled>Post</button>
+        <textarea
+          placeholder="What do you want to talk about?"
+          id="postInput"
+          name="postInput"
+        ></textarea>
+        <div class="actions">
+          <div class="checkbox-con">
+            <input id="emojiNeeded" type="checkbox" />😀
           </div>
-        </form>
+          <!-- <button id="emoji-btn">😀</button> -->
+          <button id="doc-btn" onclick="copyText()">📄</button>
+          <button
+            id="robot-btn"
+            onclick="window.open('https://github.com/zpratikpathak')"
+          >
+            &#128420;
+          </button>
+          <button id="add-btn">+</button>
+          <!-- <button id="post-btn" disabled>Post</button> -->
+          <button id="rewrite-btn" type="submit">Rewrite with AI✨</button>
+        </div>
       </div>
     </div>
   </body>
+
+  <script>
+    function sendData() {
+      var postInput = document.getElementById("postInput").value;
+      var emojiNeeded = document.getElementById("emojiNeeded").checked;
+
+      const data = {
+        postInput: postInput,
+        emojiNeeded: emojiNeeded,
+      };
+
+      fetch("{% url 'rewrite' %}", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": "{{ csrf_token }}", // Include the CSRF token for security
+        },
+        body: JSON.stringify(data),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Success:", data.success);
+          console.log("Message:", data.rewriteAI);
+          console.log("data:", data);
+          // Handle the response from the server
+          const responseAI = data.rewriteAI;
+          const postInput = document.getElementById("postInput");
+          let i = 0;
+          const typingEffect = setInterval(() => {
+            postInput.value = responseAI.slice(0, i);
+            i++;
+            if (i > responseAI.length) {
+              clearInterval(typingEffect);
+            }
+          }, 30);
+
+          // Handle the response from the server
+        })
+        .catch((error) => console.error(error));
+    }
+
+    // Trigger the sendData function when needed
+    // For example, you can call it on a button click
+    const rewriteBtn = document.getElementById("rewrite-btn");
+    rewriteBtn.addEventListener("click", sendData);
+  </script>
   <script src="{% static './rewrite/script.js'%}"></script>
 </html>
