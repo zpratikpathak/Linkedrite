@@ -26,6 +26,10 @@ def rewrite(request):
 
     if request.method == "POST":
         data = json.loads(request.body)
+        if len(data["postInput"]) <= 10:
+            return JsonResponse(
+                {"success": False, "message": "The length of the post is too short."}
+            )
         print(data)
         client = AzureOpenAI(
             api_key=api_key, api_version=api_version, azure_endpoint=azure_endpoint
