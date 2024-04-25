@@ -6,5 +6,5 @@ poetry run
 
 # How to run
 ```
-py manage.py runserver
+python manage.py runserver
 ```
