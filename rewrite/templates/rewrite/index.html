@@ -106,7 +106,7 @@
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-CSRFToken": "{{ csrf_token }}", // Include the CSRF token for security
+          // "X-CSRFToken": "{{ csrf_token }}", // Include the CSRF token for security
         },
         body: JSON.stringify(data),
       })

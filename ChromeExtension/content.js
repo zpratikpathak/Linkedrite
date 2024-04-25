@@ -4,12 +4,12 @@ function addRedButtons(shareBoxElement) {
 
   // Check if buttons are already added
   if (listItem) {
-    var existingButtons = listItem.querySelectorAll('.toolbar');
+    var existingButtons = listItem.querySelectorAll(".toolbar");
 
     if (!existingButtons || existingButtons.length < 1) {
       // Create new buttons
-      const div = document.createElement('div');
-      div.className = 'toolbar';
+      const div = document.createElement("div");
+      div.className = "toolbar";
       div.innerHTML = `
       <div id="toast" class="toast"></div>
       <div class="toggle-group">
@@ -36,29 +36,29 @@ function addRedButtons(shareBoxElement) {
 
       // Append buttons to the list item
       listItem.appendChild(div);
-      
+
       // Add event listener for the "Rewrite with AI" button
-      let postButton = document.getElementById("postButton")
-      postButton.addEventListener('click', initiatePostData)
+      let postButton = document.getElementById("postButton");
+      postButton.addEventListener("click", initiatePostData);
     }
   }
 }
 
 // Function to initiate the process of posting data to the server for rewriting
 function initiatePostData() {
-  var textContent = document.querySelector('.ql-editor').textContent;
+  var textContent = document.querySelector(".ql-editor").textContent;
   if (textContent != "") {
     // Disable the button to prevent multiple clicks
-    document.getElementById('postButton').disabled = true;
-    document.getElementById('postButton').style.backgroundColor="#bdbebf"
+    document.getElementById("postButton").disabled = true;
+    document.getElementById("postButton").style.backgroundColor = "#bdbebf";
 
     // Show loading animation
-    document.getElementById('loading').style.display = 'block';
+    document.getElementById("loading").style.display = "block";
 
     // Get toggle values for emojis and hashtags
-    var emojiToggle = document.getElementById('emoji-toggle').checked;
-    var htagToggle = document.getElementById('htag-toggle').checked;
-    
+    var emojiToggle = document.getElementById("emoji-toggle").checked;
+    var htagToggle = document.getElementById("htag-toggle").checked;
+
     // Make POST request to the server
     fetchPostData(textContent, emojiToggle, htagToggle);
   } else {
@@ -68,33 +68,33 @@ function initiatePostData() {
 
 // Function to send POST request to the server for rewriting the content
 function fetchPostData(textContent, emojiToggle, htagToggle) {
-  fetch('http://localhost:5000/post', {
-    method: 'POST',
+  fetch("http://127.0.0.1:8000/rewrite/", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      textContent: textContent,
-      emojiToggle: emojiToggle,
-      htagToggle: htagToggle
+      postInput: textContent,
+      emojiNeeded: emojiToggle,
+      htagNeeded: htagToggle,
     }),
   })
-  .then(handleResponse)
-  .then(data => {
-    // Update button style and content with the rewritten text
-    document.getElementById('postButton').style.backgroundColor="#ff4d4d"
-    document.querySelector('.ql-editor').textContent = data.response
-  })
-  .catch(handleError);
+    .then(handleResponse)
+    .then((data) => {
+      // Update button style and content with the rewritten text
+      document.getElementById("postButton").style.backgroundColor = "#ff4d4d";
+      document.querySelector(".ql-editor").textContent = data.response;
+    })
+    .catch(handleError);
 }
 
 // Function to handle response from the server
 function handleResponse(response) {
   // Re-enable the button
-  document.getElementById('postButton').disabled = false;
+  document.getElementById("postButton").disabled = false;
 
   // Hide loading animation
-  document.getElementById('loading').style.display = 'none';
+  document.getElementById("loading").style.display = "none";
 
   if (!response.ok) {
     // Handle non-okay response
@@ -106,23 +106,23 @@ function handleResponse(response) {
 // Function to handle errors during the POST request
 function handleError(error) {
   // Update button style and show error toast
-  document.getElementById('postButton').style.backgroundColor="#ff4d4d"
+  document.getElementById("postButton").style.backgroundColor = "#ff4d4d";
   showToast("An Error Occurred");
 
   // Re-enable the button and hide loading animation
-  document.getElementById('postButton').disabled = false;
-  document.getElementById('loading').style.display = 'none';
+  document.getElementById("postButton").disabled = false;
+  document.getElementById("loading").style.display = "none";
 }
 
 // Function to display toast message
 function showToast(message) {
-  var toast = document.getElementById('toast');
+  var toast = document.getElementById("toast");
   toast.textContent = message;
-  toast.style.display = 'block';
+  toast.style.display = "block";
 
   // Hide the toast after a certain duration (e.g., 3 seconds)
-  setTimeout(function() {
-      toast.style.display = 'none';
+  setTimeout(function () {
+    toast.style.display = "none";
   }, 3000); // Adjust the duration as needed
 }
 
@@ -143,7 +143,7 @@ function observeMutations() {
         if (shareBoxElement) {
           if (observer1) {
             observer1.disconnect();
-            observer1 = null
+            observer1 = null;
           }
           observer1 = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
@@ -166,7 +166,7 @@ function observeMutations() {
 observeMutations();
 
 // Event listener for beforeunload event to disconnect observers
-window.addEventListener('beforeunload', function (e) {
+window.addEventListener("beforeunload", function (e) {
   disconnectObservers();
 });
 
