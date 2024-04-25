@@ -13,6 +13,10 @@ api_version = os.getenv("API_VERSION")
 azure_endpoint = os.getenv("AZURE_API_ENDPOINT")
 deployment_name = os.getenv("DEPLOYMENT_MODEL")
 
+client = AzureOpenAI(
+    api_key=api_key, api_version=api_version, azure_endpoint=azure_endpoint
+)
+
 
 # Create your views here.
 def index(request):
@@ -63,10 +67,6 @@ class RewriteAPI(APIView):
                 {"success": False, "message": "The length of the post is too short."},
                 status=400,
             )
-
-        client = AzureOpenAI(
-            api_key=api_key, api_version=api_version, azure_endpoint=azure_endpoint
-        )
 
         prompt = "Consider yourself writing a linkedIn post now Rewrite the following text and make it more engaging and attractive. Correct the Grammar. It should have professional tone. The post is public, it should be in indirect speech. It should be clear and precise. Only return the rewritten text. Do not enclose the text in quotes. Do not add Blank space starting and ending of the text."
         if data["emojiNeeded"]:
