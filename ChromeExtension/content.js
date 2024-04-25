@@ -1,6 +1,6 @@
 // Function to add red buttons for AI post rewriting
 function addRedButtons(shareBoxElement) {
-  const listItem = shareBoxElement.querySelector(".artdeco-carousel__content");
+  const listItem = shareBoxElement.querySelector(".artdeco-carousel__slider.ember-view");
 
   // Check if buttons are already added
   if (listItem) {
@@ -81,6 +81,7 @@ function fetchPostData(textContent, emojiToggle, htagToggle) {
   })
     .then(handleResponse)
     .then((data) => {
+      console.log(data)
       // Update button style and content with the rewritten text
       document.getElementById("postButton").style.backgroundColor = "#ff4d4d";
       // document.querySelector(".ql-editor").textContent = data.rewriteAI;
@@ -108,8 +109,7 @@ function handleResponse(response) {
   document.getElementById("loading").style.display = "none";
 
   if (!response.ok) {
-    // Handle non-okay response
-    // document.getElementById("failed").style.display="block"
+    return {"rewriteAI":""}
   }
   return response.json();
 }
