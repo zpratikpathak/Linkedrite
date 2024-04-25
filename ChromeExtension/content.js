@@ -94,7 +94,7 @@ function fetchPostData(textContent, emojiToggle, htagToggle) {
         if (i > responseAI.length) {
           clearInterval(typingEffect);
         }
-      }, 10);
+      }, 5);
     })
     .catch(handleError);
 }
