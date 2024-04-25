@@ -1,36 +1,43 @@
 // Function to add red buttons for AI post rewriting
 function addRedButtons(shareBoxElement) {
   const listItem = shareBoxElement.querySelector(".artdeco-carousel__slider.ember-view");
+  const parentDiv = shareBoxElement.querySelector(".artdeco-carousel__content");
 
   // Check if buttons are already added
   if (listItem) {
     var existingButtons = listItem.querySelectorAll(".toolbar");
 
     if (!existingButtons || existingButtons.length < 1) {
+      let toast = document.getElementById("toast");
+      if (!toast) {
+        const toastDiv = document.createElement("div");
+        toastDiv.id = "toast";
+        toastDiv.className = "toast";
+        parentDiv.appendChild(toastDiv);
+      }
+
       // Create new buttons
       const div = document.createElement("div");
       div.className = "toolbar";
       div.innerHTML = `
-      <div id="toast" class="toast"></div>
-      <div class="toggle-group">
-            <input type="checkbox" id="emoji-toggle" class="toggle-input" style="margin:0px !important">
-            <label for="emoji-toggle" class="button toggle-label" style="margin:0px !important">
-                <span class="toggle-switch"></span>
-                Emojis😀
-            </label>
-            <input type="checkbox" id="htag-toggle" class="toggle-input" style="margin:0px !important">
-            <label for="htag-toggle" class="button toggle-label" style="margin:0px !important">
-                <span class="toggle-switch"></span>
-                HashTag🔖
-            </label>
+        <div class="toggle-group">
+          <input type="checkbox" id="emoji-toggle" class="toggle-input" style="margin:0px !important">
+          <label for="emoji-toggle" class="button toggle-label" style="margin:0px !important">
+            <span class="toggle-switch"></span>
+            Emojis😀
+          </label>
+          <input type="checkbox" id="htag-toggle" class="toggle-input" style="margin:0px !important">
+          <label for="htag-toggle" class="button toggle-label" style="margin:0px !important">
+            <span class="toggle-switch"></span>
+            HashTag🔖
+          </label>
         </div>
         <button id="postButton" class="button red-button" style="margin-left:5px !important">Rewrite with AI✨</button>
         <div id="loading" style="display: none;">
-            <div class="loader-3"><span></span></div>
+          <div class="loader-3"><span></span></div>
         </div>
-
         <div id="failed" style="display: none;">
-            <img src="data:image/png;base64" alt="reload" style="height:28px;width:28px;padding:5px 0px 0px 5px;">
+          <img src="data:image/png;base64" alt="reload" style="height:28px;width:28px;padding:5px 0px 0px 5px;">
         </div>
       `;
 
@@ -81,19 +88,21 @@ function fetchPostData(textContent, emojiToggle, htagToggle) {
   })
     .then(handleResponse)
     .then((data) => {
-      console.log(data)
-      // Update button style and content with the rewritten text
-      document.getElementById("postButton").style.backgroundColor = "#ff4d4d";
-      // document.querySelector(".ql-editor").textContent = data.rewriteAI;
       const responseAI = data.rewriteAI;
+      console.log(responseAI)
       const editor = document.querySelector(".ql-editor");
-      editor.textContent = ""; // Clear the .ql-editor content
+      if (responseAI != "")
+        editor.textContent = ""; // Clear the .ql-editor content
       let i = 0;
       const typingEffect = setInterval(() => {
         editor.textContent += responseAI.charAt(i);
         i++;
         if (i > responseAI.length) {
           clearInterval(typingEffect);
+          // Re-enable the button
+          document.getElementById("postButton").disabled = false;
+          document.getElementById("postButton").style.backgroundColor = "#ff4d4d"
+          document.getElementById("loading").style.display = "none";
         }
       }, 10);
     })
@@ -102,14 +111,9 @@ function fetchPostData(textContent, emojiToggle, htagToggle) {
 
 // Function to handle response from the server
 function handleResponse(response) {
-  // Re-enable the button
-  document.getElementById("postButton").disabled = false;
-
-  // Hide loading animation
-  document.getElementById("loading").style.display = "none";
-
   if (!response.ok) {
-    return {"rewriteAI":""}
+    showToast("Bad Request")
+    return { "rewriteAI": "" }
   }
   return response.json();
 }
