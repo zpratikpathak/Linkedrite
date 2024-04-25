@@ -83,7 +83,18 @@ function fetchPostData(textContent, emojiToggle, htagToggle) {
     .then((data) => {
       // Update button style and content with the rewritten text
       document.getElementById("postButton").style.backgroundColor = "#ff4d4d";
-      document.querySelector(".ql-editor").textContent = data.response;
+      // document.querySelector(".ql-editor").textContent = data.rewriteAI;
+      const responseAI = data.rewriteAI;
+      const editor = document.querySelector(".ql-editor");
+      editor.textContent = ""; // Clear the .ql-editor content
+      let i = 0;
+      const typingEffect = setInterval(() => {
+        editor.textContent += responseAI.charAt(i);
+        i++;
+        if (i > responseAI.length) {
+          clearInterval(typingEffect);
+        }
+      }, 10);
     })
     .catch(handleError);
 }
