@@ -1,6 +1,8 @@
 // Function to add red buttons for AI post rewriting
 function addRedButtons(shareBoxElement) {
-  const listItem = shareBoxElement.querySelector(".artdeco-carousel__slider.ember-view");
+  const listItem = shareBoxElement.querySelector(
+    ".artdeco-carousel__slider.ember-view"
+  );
   const parentDiv = shareBoxElement.querySelector(".artdeco-carousel__content");
 
   // Check if buttons are already added
@@ -89,10 +91,8 @@ function fetchPostData(textContent, emojiToggle, htagToggle) {
     .then(handleResponse)
     .then((data) => {
       const responseAI = data.rewriteAI;
-      console.log(responseAI)
       const editor = document.querySelector(".ql-editor");
-      if (responseAI != "")
-        editor.textContent = ""; // Clear the .ql-editor content
+      editor.textContent = ""; // Clear the .ql-editor content
       let i = 0;
       const typingEffect = setInterval(() => {
         editor.textContent += responseAI.charAt(i);
@@ -101,7 +101,8 @@ function fetchPostData(textContent, emojiToggle, htagToggle) {
           clearInterval(typingEffect);
           // Re-enable the button
           document.getElementById("postButton").disabled = false;
-          document.getElementById("postButton").style.backgroundColor = "#ff4d4d"
+          document.getElementById("postButton").style.backgroundColor =
+            "#ff4d4d";
           document.getElementById("loading").style.display = "none";
         }
       }, 5);
@@ -112,8 +113,8 @@ function fetchPostData(textContent, emojiToggle, htagToggle) {
 // Function to handle response from the server
 function handleResponse(response) {
   if (!response.ok) {
-    showToast("Bad Request")
-    return { "rewriteAI": "" }
+    showToast("Bad Request");
+    return { rewriteAI: "" };
   }
   return response.json();
 }
