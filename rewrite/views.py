@@ -4,6 +4,10 @@ from django.http import JsonResponse
 import os
 from openai import AzureOpenAI
 from dotenv import load_dotenv
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from django.http import JsonResponse
+import json
 
 load_dotenv(".env")
 api_key = os.getenv("OPENAI_API_KEY")
@@ -22,15 +26,45 @@ def index(request):
     )
 
 
-def rewrite(request):
+# def rewrite(request):
 
-    if request.method == "POST":
-        data = json.loads(request.body)
+#     if request.method == "POST":
+#         data = json.loads(request.body)
+#         if len(data["postInput"]) <= 10:
+#             return JsonResponse(
+#                 {"success": False, "message": "The length of the post is too short."}
+#             )
+#         print(data)
+#         client = AzureOpenAI(
+#             api_key=api_key, api_version=api_version, azure_endpoint=azure_endpoint
+#         )
+
+#         prompt = "Consider yourself writing a linkedIn post now Rewrite the following text and make it more engaging and attractive. Correct the Grammar. It should have professional tone. The post is public, it should be in indirect speech. It should be clear and precise. Only return the rewritten text."
+#         if data["emojiNeeded"]:
+#             prompt += " Add emojis to make it more engaging."
+#         prompt += "\n Now rewrite this text:" + data["postInput"]
+#         print("Prompt:", prompt)
+#         response = client.completions.create(
+#             model=deployment_name,
+#             prompt=prompt,
+#             # temperature=0.8,
+#             max_tokens=1000,
+#             # best_of=5,
+#         )
+#         print(response.choices[0].text)
+#         return JsonResponse({"success": True, "rewriteAI": response.choices[0].text})
+#     return JsonResponse({"success": False})
+
+
+class RewriteAPI(APIView):
+    def post(self, request):
+        data = request.data
         if len(data["postInput"]) <= 10:
-            return JsonResponse(
-                {"success": False, "message": "The length of the post is too short."}
+            return Response(
+                {"success": False, "message": "The length of the post is too short."},
+                status=400,
             )
-        print(data)
+
         client = AzureOpenAI(
             api_key=api_key, api_version=api_version, azure_endpoint=azure_endpoint
         )
@@ -39,14 +73,14 @@ def rewrite(request):
         if data["emojiNeeded"]:
             prompt += " Add emojis to make it more engaging."
         prompt += "\n Now rewrite this text:" + data["postInput"]
-        print("Prompt:", prompt)
+
         response = client.completions.create(
             model=deployment_name,
             prompt=prompt,
-            # temperature=0.8,
             max_tokens=1000,
-            # best_of=5,
         )
-        print(response.choices[0].text)
-        return JsonResponse({"success": True, "rewriteAI": response.choices[0].text})
-    return JsonResponse({"success": False})
+
+        return Response({"success": True, "rewriteAI": response.choices[0].text})
+
+    def get(self, request):
+        return Response({"success": False})
