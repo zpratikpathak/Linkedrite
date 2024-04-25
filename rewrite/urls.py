@@ -7,3 +7,5 @@ urlpatterns = [
     path("", views.index),
     path("rewrite/", views.RewriteAPI.as_view(), name="rewrite"),
 ]
+
+handler404 = "rewrite.views.error_404"
