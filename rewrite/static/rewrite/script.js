@@ -2,7 +2,7 @@ const postInput = document.getElementById("postInput");
 // const postBtn = document.getElementById("post-btn");
 
 postInput.addEventListener("input", () => {
-  postInput.style.height = "auto"; // Reset height to shrink if content is deleted
+  postInput.style.height = "230px"; // Reset height to shrink if content is deleted
   postInput.style.height = `${postInput.scrollHeight}px`; // Set height to fit content
 });
 
