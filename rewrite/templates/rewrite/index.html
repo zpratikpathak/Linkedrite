@@ -28,7 +28,7 @@
         <div class="actions">
           <div class="actionButton">
             <div class="checkbox-con">
-              <input id="emojiNeeded" type="checkbox" />😀
+              <input id="emojiNeeded" type="checkbox" checked />😀
             </div>
             <!-- <button id="emoji-btn">😀</button> -->
           </div>
@@ -55,7 +55,10 @@
                 ></path>
               </svg>
             </button>
-            <button id="rewrite-btn" type="submit">Rewrite with AI✨</button>
+            <button id="rewrite-btn" class="rewrite-btn" type="submit">
+              <span id="button-text">Rewrite with AI✨</span>
+              <div id="spinner" style="display: none"></div>
+            </button>
           </div>
         </div>
       </div>
@@ -63,7 +66,7 @@
   </body>
 
   <script>
-    function writeText(text, placeholder = false) {
+    function writeText(text, placeholder = false, callback = null) {
       const responseAI = text;
       const postInput = document.getElementById("postInput");
       let i = 0;
@@ -81,6 +84,10 @@
         i++;
         if (i > responseAI.length) {
           clearInterval(typingEffect);
+          console.log("writeText completed");
+          if (callback) {
+            callback();
+          }
         }
       }, 30);
     }
@@ -88,6 +95,9 @@
     function sendData() {
       var postInput = document.getElementById("postInput").value;
       var emojiNeeded = document.getElementById("emojiNeeded").checked;
+      var rewriteBtn = document.getElementById("rewrite-btn");
+      var spinner = document.getElementById("spinner");
+      var buttonText = document.getElementById("button-text");
 
       const data = {
         postInput: postInput,
@@ -102,6 +112,14 @@
         writeText(responseAI, true);
         return;
       }
+
+      // Disable the button and show the spinner
+      rewriteBtn.disabled = true;
+      spinner.style.display = "inline-block";
+      buttonText.style.display = "none";
+
+      document.getElementById("spinner").style.display = "inline-block";
+      document.getElementById("button-text").style.display = "none";
 
       fetch("{% url 'rewrite' %}", {
         method: "POST",
@@ -118,13 +136,22 @@
           console.log("data:", data);
           // Handle the response from the server
           const responseAI = data.rewriteAI;
-          writeText(responseAI);
-
-          // Handle the response from the server
+          writeText(responseAI, false, function () {
+            // Enable the button and hide the spinner
+            rewriteBtn.disabled = false;
+            spinner.style.display = "none";
+            buttonText.style.display = "inline-block";
+          });
         })
-        .catch((error) => console.error(error));
-    }
+        .catch((error) => {
+          console.error(error);
 
+          // Enable the button and hide the spinner in case of error
+          rewriteBtn.disabled = false;
+          spinner.style.display = "none";
+          buttonText.style.display = "inline-block";
+        });
+    }
     // Trigger the sendData function when needed
     // For example, you can call it on a button click
     const rewriteBtn = document.getElementById("rewrite-btn");

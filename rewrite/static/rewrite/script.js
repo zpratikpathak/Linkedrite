@@ -8,10 +8,30 @@ postInput.addEventListener("input", () => {
 
 // copy to clipboard
 function copyText() {
-  var copyText = document.getElementById("postInput");
-  copyText.select();
-  copyText.setSelectionRange(0, 99999); // For mobile devices
+  var copyText = document.getElementById("postInput").value;
 
-  document.execCommand("copy");
-  // alert("Copied the text: " + copyText.value);
+  navigator.clipboard
+    .writeText(copyText)
+    .then(() => {
+      showToast("Copied");
+    })
+    .catch((error) => console.error("Could not copy text: ", error));
+}
+
+function showToast(message) {
+  var toast = document.createElement("div");
+  toast.className = "toast";
+  toast.textContent = message;
+  document.body.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add("show");
+  }, 100);
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => {
+      document.body.removeChild(toast);
+    }, 500);
+  }, 2000);
 }
