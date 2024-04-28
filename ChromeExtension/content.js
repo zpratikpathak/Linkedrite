@@ -1,13 +1,13 @@
 // Function to add red buttons for AI post rewriting
+// Function to add red buttons for AI post rewriting
 function addRedButtons(shareBoxElement) {
-  const listItem = shareBoxElement.querySelector(
-    ".artdeco-carousel__slider.ember-view"
+  const parentDiv = shareBoxElement.querySelector(
+    ".share-creation-state__footer.justify-flex-end"
   );
-  const parentDiv = shareBoxElement.querySelector(".artdeco-carousel__content");
 
   // Check if buttons are already added
-  if (listItem) {
-    var existingButtons = listItem.querySelectorAll(".toolbar");
+  if (parentDiv) {
+    var existingButtons = parentDiv.querySelectorAll(".toolbar");
 
     if (!existingButtons || existingButtons.length < 1) {
       let toast = document.getElementById("toast");
@@ -15,12 +15,14 @@ function addRedButtons(shareBoxElement) {
         const toastDiv = document.createElement("div");
         toastDiv.id = "toast";
         toastDiv.className = "toast";
-        parentDiv.appendChild(toastDiv);
+        parentDiv.insertBefore(toastDiv, parentDiv.firstChild);
       }
 
       // Create new buttons
       const div = document.createElement("div");
       div.className = "toolbar";
+      div.style.display = "flex";
+      div.style.justifyContent = "flex-start"; // Add justify-content: flex-start
       div.innerHTML = `
         <div class="toggle-group">
           <input type="checkbox" id="emoji-toggle" class="toggle-input" style="margin:0px !important" checked>
@@ -43,8 +45,8 @@ function addRedButtons(shareBoxElement) {
         </div>
       `;
 
-      // Append buttons to the list item
-      listItem.appendChild(div);
+      // Insert buttons as the first child of the parent div
+      parentDiv.insertBefore(div, parentDiv.firstChild);
 
       // Add event listener for the "Rewrite with AI" button
       let postButton = document.getElementById("postButton");
