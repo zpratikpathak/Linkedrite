@@ -21,7 +21,7 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         script: |
           ls -la
-          cd /LinkedinAI
+          cd LinkedinAI
           git reset --hard
           git pull
           sed -i "s/SECRET_KEY = .*/SECRET_KEY = '${{ secrets.SECRET_KEY }}'/g" LinkedInAi/settings.py
