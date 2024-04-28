@@ -22,7 +22,8 @@ function showToast(message) {
   var toast = document.createElement("div");
   toast.className = "toast";
   toast.textContent = message;
-  toast.style.color = "#ea0707"; // Set the color of the toast
+  toast.style.backgroundColor = "#ea0707"; // Set the background color of the toast
+  toast.style.color = "#ffffff"; // Set the text color of the toast
   document.body.appendChild(toast);
 
   setTimeout(() => {
