@@ -7,7 +7,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-django = "4"
+django = "4.1.13"
 openai = "^1.23.6"
 python-dotenv = "^1.0.1"
 djangorestframework = "^3.15.1"
