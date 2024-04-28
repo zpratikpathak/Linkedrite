@@ -6,18 +6,15 @@ authors = ["Pratik Pathak <pratikpathak200@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.10"
-django = "^5.0.4"
-openai = "^1.23.2"
+python = "^3.8"
+django = "4"
+openai = "^1.23.6"
 python-dotenv = "^1.0.1"
 djangorestframework = "^3.15.1"
 django-cors-headers = "^4.3.1"
 whitenoise = "^6.6.0"
 gunicorn = "^22.0.0"
 
-
-[tool.poetry.group.dev.dependencies]
-black = "^24.4.1"
 
 [build-system]
 requires = ["poetry-core"]

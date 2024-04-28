@@ -20,6 +20,8 @@ db.sqlite3
 .idea/
 
 # Dependency directories
+.venv/
 venv/
+.venv2
 node_modules/
 my-virtual-env/
