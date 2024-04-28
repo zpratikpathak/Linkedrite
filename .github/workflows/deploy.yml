@@ -21,7 +21,7 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         script: |
           sudo su -
-            ls -la
+          ls -la
           cd ~/LinkedinAI
           git reset --hard
           git pull
