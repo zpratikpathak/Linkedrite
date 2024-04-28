@@ -7,13 +7,23 @@
     "activeTab"
   ],
   "host_permissions": [
-    "http://127.0.0.1:8000/*",
-    "https://127.0.0.1:8000/*"
+    "http://linkedinai.pratikpathak.com/*",
+    "https://linkedinai.pratikpathak.com/*"
   ],
+  "icons": {
+    "16": "icon.png",
+    "48": "icon.png",
+    "128": "icon.png"
+  },
   "content_scripts": [
     {
       "matches": [
-        "https://www.linkedin.com/feed/*"
+        "https://www.linkedin.com/feed/*",
+        "https://www.linkedin.com/*",
+        "https://www.linkedin.com/in/*",
+        "https://linkedin.com/*",
+        "https://linkedin.com/in/*",
+        "https://linkedin.com/feed/*"
       ],
       "js": [
         "content.js"

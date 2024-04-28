@@ -23,18 +23,18 @@ function addRedButtons(shareBoxElement) {
       div.className = "toolbar";
       div.innerHTML = `
         <div class="toggle-group">
-          <input type="checkbox" id="emoji-toggle" class="toggle-input" style="margin:0px !important">
+          <input type="checkbox" id="emoji-toggle" class="toggle-input" style="margin:0px !important" checked>
           <label for="emoji-toggle" class="button toggle-label" style="margin:0px !important">
             <span class="toggle-switch"></span>
             Emojis😀
           </label>
-          <input type="checkbox" id="htag-toggle" class="toggle-input" style="margin:0px !important">
-          <label for="htag-toggle" class="button toggle-label" style="margin:0px !important">
+          <input type="checkbox" id="htag-toggle" class="toggle-input" style="margin:0px !important;" checked>
+          <label for="htag-toggle" class="button toggle-label" style="margin:0px !important; display: none">
             <span class="toggle-switch"></span>
             HashTag🔖
           </label>
         </div>
-        <button id="postButton" class="button red-button" style="margin-left:5px !important">Rewrite with AI✨</button>
+        <button id="postButton" class="button red-button" style="margin-left:5px !important; padding: 10px">Rewrite with AI✨</button>
         <div id="loading" style="display: none;">
           <div class="loader-3"><span></span></div>
         </div>
@@ -77,7 +77,7 @@ function initiatePostData() {
 
 // Function to send POST request to the server for rewriting the content
 function fetchPostData(textContent, emojiToggle, htagToggle) {
-  fetch("http://127.0.0.1:8000/rewrite/", {
+  fetch("https://linkedinai.pratikpathak.com/rewrite/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -105,7 +105,7 @@ function fetchPostData(textContent, emojiToggle, htagToggle) {
             "#ff4d4d";
           document.getElementById("loading").style.display = "none";
         }
-      }, 5);
+      }, 25);
     })
     .catch(handleError);
 }
@@ -179,7 +179,10 @@ function observeMutations() {
 }
 
 // Start observing mutations
-observeMutations();
+// observeMutations();
+window.onload = function () {
+  observeMutations();
+};
 
 // Event listener for beforeunload event to disconnect observers
 window.addEventListener("beforeunload", function (e) {
