@@ -3,7 +3,7 @@ name: Deploy to server
 on:
   push:
     branches:
-      - main  # Trigger the workflow on push or pull request to the main branch
+      - master  # Trigger the workflow on push or pull request to the master branch
 
 jobs:
   deploy:
