@@ -1,0 +1,31 @@
+name: Deploy to server
+
+on:
+  push:
+    branches:
+      - main  # Trigger the workflow on push or pull request to the main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Execute remote ssh commands to deploy
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          sudo su -
+          cd ~/LinkedinAI
+          git reset --hard
+          git pull
+          sed -i "s/SECRET_KEY = .*/SECRET_KEY = '${{ secrets.SECRET_KEY }}'/g" LinkedInAi/settings.py
+          sed -i "s/DEBUG = .*/DEBUG = False/g" LinkedInAi/settings.py
+          sed -i "s/ALLOWED_HOSTS = .*/ALLOWED_HOSTS = ['linkedinai.pratikpathak.com']/g" LinkedInAi/settings.py
+          pkill -f runserver
+          nohup .venv/bin/python manage.py runserver > server.log 2>&1 &
