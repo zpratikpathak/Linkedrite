@@ -68,7 +68,7 @@ class RewriteAPI(APIView):
                 status=400,
             )
 
-        prompt = "Consider yourself writing a linkedIn post now Rewrite the following text and make it more engaging and attractive. Correct the Grammar. It should have professional tone. The post is public, it should be in indirect speech. It should be clear and precise. Only return the rewritten text. Do not enclose the text in quotes. Do not add Blank space starting and ending of the text."
+        prompt = "Consider yourself writing a linkedIn post now Rewrite the following text and make it more engaging and attractive. Correct the Grammar. Keep the number of paragraphs same. keep the format of post same. It should have professional tone. The post is public, it should be in indirect speech. The post should should be clear and precise. Only return the rewritten text. Do not enclose the text in quotes. Do not add Blank space starting and ending of the text."
         if data["emojiNeeded"]:
             prompt += " Add emojis to make it more engaging."
         if data["htagNeeded"]:

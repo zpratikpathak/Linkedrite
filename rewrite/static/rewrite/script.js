@@ -1,10 +1,10 @@
-const postInput = document.getElementById("postInput");
-// const postBtn = document.getElementById("post-btn");
-
-postInput.addEventListener("input", () => {
+function adjustHeight() {
+  const postInput = document.getElementById("postInput");
   postInput.style.height = "230px"; // Reset height to shrink if content is deleted
   postInput.style.height = `${postInput.scrollHeight}px`; // Set height to fit content
-});
+}
+
+postInput.addEventListener("input", adjustHeight);
 
 // copy to clipboard
 function copyText() {

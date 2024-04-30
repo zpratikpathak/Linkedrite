@@ -81,7 +81,7 @@
           postInput.placeholder = currentText;
         } else {
           postInput.value = currentText;
-          //postInput.style.height = postInput.scrollHeight + "px"; // Adjust the height based on the scrollHeight
+          adjustHeight(); // Adjust the height after changing the value
         }
         i++;
         if (i > responseAI.length) {
@@ -100,46 +100,44 @@
       var rewriteBtn = document.getElementById("rewrite-btn");
       var spinner = document.getElementById("spinner");
       var buttonText = document.getElementById("button-text");
-
+    
       const data = {
         postInput: postInput,
         emojiNeeded: emojiNeeded,
         htagNeeded: true,
       };
-
-      // if length of postInput is less than 10, then ask user to enter more data
+    
       if (postInput.length < 10) {
-        const responseAI =
-          "Please write more to generate a professional response";
+        const responseAI = "Please write more to generate a professional response";
         writeText(responseAI, true);
         return;
       }
-
-      // Disable the button and show the spinner
+    
       rewriteBtn.disabled = true;
       spinner.style.display = "inline-block";
       buttonText.style.display = "none";
-
-      document.getElementById("spinner").style.display = "inline-block";
-      document.getElementById("button-text").style.display = "none";
-
+    
       fetch("{% url 'rewrite' %}", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          // "X-CSRFToken": "{{ csrf_token }}", // Include the CSRF token for security
+          // "X-CSRFToken": "{{ csrf_token }}",
         },
         body: JSON.stringify(data),
       })
         .then((response) => response.json())
         .then((data) => {
+          if (!data || !data.rewriteAI) {
+            showToast("An error occurred");
+            return;
+          }
+    
           console.log("Success:", data.success);
           console.log("Message:", data.rewriteAI);
           console.log("data:", data);
-          // Handle the response from the server
+    
           const responseAI = data.rewriteAI;
           writeText(responseAI, false, function () {
-            // Enable the button and hide the spinner
             rewriteBtn.disabled = false;
             spinner.style.display = "none";
             buttonText.style.display = "inline-block";
@@ -147,8 +145,8 @@
         })
         .catch((error) => {
           console.error(error);
-
-          // Enable the button and hide the spinner in case of error
+          showToast("An error occurred");
+    
           rewriteBtn.disabled = false;
           spinner.style.display = "none";
           buttonText.style.display = "inline-block";
