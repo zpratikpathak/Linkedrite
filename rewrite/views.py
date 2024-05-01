@@ -6,6 +6,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import JsonResponse
 import json
+from rest_framework.throttling import UserRateThrottle
+from rest_framework.decorators import throttle_classes
+
 
 load_dotenv(".env")
 api_key = os.getenv("OPENAI_API_KEY")
@@ -58,6 +61,7 @@ def index(request):
 #     return JsonResponse({"success": False})
 
 
+@throttle_classes([UserRateThrottle])
 class RewriteAPI(APIView):
     def post(self, request):
         data = request.data
@@ -68,7 +72,7 @@ class RewriteAPI(APIView):
                 status=400,
             )
 
-        prompt = "Consider yourself writing a linkedIn post now Rewrite the following text and make it more engaging and attractive. Correct the Grammar. Keep the number of paragraphs same. keep the format of post same. It should have professional tone. The post is public, it should be in indirect speech. The post should should be clear and precise. Only return the rewritten text. Do not enclose the text in quotes. Do not add Blank space starting and ending of the text."
+        prompt = "Consider yourself writing a linkedIn post now Rewrite the following text and make it more engaging and attractive. Correct the Grammar. Keep the number of paragraphs same. keep the format of post same. It should have professional tone. The post is public, it should be in indirect speech. The post should should be clear and precise. Only return the rewritten text. Do not enclose the text in quotes. Do not add Blank space starting and ending of the text. If there is question in the post then Rewrite the question in a more professional and engaging manner "
         if data["emojiNeeded"]:
             prompt += " Add emojis to make it more engaging."
         if data["htagNeeded"]:
@@ -76,6 +80,18 @@ class RewriteAPI(APIView):
         else:
             prompt += " Do not add hashtags."
         prompt += "\n Now rewrite this text: " + data["postInput"]
+        print("Prompt:", prompt)
+
+        # prompt = "Rewrite the following LinkedIn post to make it more engaging, attractive, and professional. Correct any grammar errors, maintain the same number of paragraphs and format, and use indirect speech. The post is public, so it should be clear and precise. Do not enclose the text in quotes or add blank spaces at the start or end of the text."
+        # if data["emojiNeeded"]:
+        #     prompt += " Include emojis for added engagement."
+        # if data["htagNeeded"]:
+        #     prompt += " Include relevant hashtags for visibility."
+        # else:
+        #     prompt += " Do not include hashtags."
+
+        # prompt += "\nHere's the original post: " + data["postInput"]
+
         # print("Prompt:", prompt)
 
         response = client.completions.create(
@@ -83,6 +99,9 @@ class RewriteAPI(APIView):
             prompt=prompt,
             max_tokens=1000,
         )
+        print("Answer", response.choices[0].text)
+        # removing starting and ending blank lines
+        response.choices[0].text = response.choices[0].text.strip()
 
         return Response({"success": True, "rewriteAI": response.choices[0].text})
 

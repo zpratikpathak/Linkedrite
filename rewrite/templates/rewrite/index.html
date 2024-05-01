@@ -125,7 +125,16 @@
         },
         body: JSON.stringify(data),
       })
-        .then((response) => response.json())
+        .then((response) => {
+          if (!response.ok) {
+            if (response.status === 429) {
+              throw new Error("Too Many Requests");
+            } else {
+              throw new Error("An error occurred");
+            }
+          }
+          return response.json();
+        })
         .then((data) => {
           if (!data || !data.rewriteAI) {
             showToast("An error occurred");
@@ -145,15 +154,14 @@
         })
         .catch((error) => {
           console.error(error);
-          showToast("An error occurred");
+          showToast(error.message);
     
           rewriteBtn.disabled = false;
           spinner.style.display = "none";
           buttonText.style.display = "inline-block";
         });
     }
-    // Trigger the sendData function when needed
-    // For example, you can call it on a button click
+    
     const rewriteBtn = document.getElementById("rewrite-btn");
     rewriteBtn.addEventListener("click", sendData);
   </script>
