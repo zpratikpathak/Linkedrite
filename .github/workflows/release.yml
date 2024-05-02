@@ -27,6 +27,8 @@ jobs:
     - name: Modify content.js
       run: |
         sed -i 's|http://127.0.0.1:8000|https://linkedinai.pratikpathak.com|g' ChromeExtension/content.js  # replace with the path to your content.js file
+        sed -i 's|<current version>|${{ steps.extract_version.outputs.version }}|g' ChromeExtension/content.js  # replace <current version> with the actual version
+        sed -i 's|// checkForUpdates();|checkForUpdates();|g' ChromeExtension/content.js  # uncomment the checkForUpdates(); line
 
     - name: Pack extension
       run: |

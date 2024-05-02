@@ -202,3 +202,21 @@ function disconnectObservers() {
     observer1 = null;
   }
 }
+
+// Function to check for the latest release from GitHub
+function checkForUpdates() {
+  fetch("https://api.github.com/repos/zpratikpathak/LinkedinAI/releases/latest")
+    .then((response) => response.json())
+    .then((data) => {
+      const latestVersion = data.tag_name.replace("release-", "");
+      const currentVersion = "<current version>"; // replace with the current version of your extension
+      if (latestVersion !== currentVersion) {
+        const downloadUrl = data.assets[0].browser_download_url;
+        showToast(`New version available. Download here: ${downloadUrl}`);
+      }
+    })
+    .catch((error) => console.error("Error:", error));
+}
+
+// Call the function to check for updates
+// checkForUpdates();
