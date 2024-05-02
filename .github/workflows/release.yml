@@ -17,10 +17,15 @@ jobs:
       run: |
         echo "${{ secrets.PEM_KEY }}" > key.pem
 
+    - name: Extract version
+      id: extract_version
+      run: |
+        echo "::set-output name=version::$(jq -r .version ChromeExtension/manifest.json)"
+
     - name: Pack extension
       run: |
         google-chrome --pack-extension=ChromeExtension --pack-extension-key=key.pem
-        mv ChromeExtension.crx ChromeExtension-${{ github.sha }}.crx
+        mv ChromeExtension.crx LinkedInAI${{ steps.extract_version.outputs.version }}-${{ github.sha }}.crx
 
     - name: Create Release
       id: create_release
@@ -40,6 +45,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.PAT }}  # use the PAT instead of the GITHUB_TOKEN
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}  # from the step above
-        asset_path: ./ChromeExtension-${{ github.sha }}.crx
-        asset_name: extension-${{ github.sha }}.crx
+        asset_path: ./LinkedInAI${{ steps.extract_version.outputs.version }}-${{ github.sha }}.crx
+        asset_name: LinkedInAI${{ steps.extract_version.outputs.version }}-${{ github.sha }}.crx
         asset_content_type: application/x-chrome-extension
