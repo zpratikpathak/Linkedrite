@@ -79,7 +79,7 @@ function initiatePostData() {
 
 // Function to send POST request to the server for rewriting the content
 function fetchPostData(textContent, emojiToggle, htagToggle) {
-  fetch("https://linkedinai.pratikpathak.com/rewrite/", {
+  fetch("http://127.0.0.1:8000/rewrite/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

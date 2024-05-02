@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - master  # replace with your default branch if not 'master'
+    paths:
+      - 'ChromeExtension/manifest.json'  # replace with the path to your manifest.json file
 
 jobs:
   build:
@@ -22,6 +24,10 @@ jobs:
       run: |
         echo "::set-output name=version::$(jq -r .version ChromeExtension/manifest.json)"
 
+    - name: Modify content.js
+      run: |
+        sed -i 's|http://127.0.0.1:8000|https://linkedinai.pratikpathak.com|g' ChromeExtension/content.js  # replace with the path to your content.js file
+
     - name: Pack extension
       run: |
         google-chrome --pack-extension=ChromeExtension --pack-extension-key=key.pem
@@ -34,7 +40,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.PAT }}  # use the PAT instead of the GITHUB_TOKEN
       with:
         tag_name: release-${{ steps.extract_version.outputs.version }}  # use the version as the tag
-        release_name: Release ${{ steps.extract_version.outputs.version }}  # use the version as the release name
+        release_name: LinkedInAI ${{ steps.extract_version.outputs.version }}  # use the version as the release name
         draft: false
         prerelease: false
 
