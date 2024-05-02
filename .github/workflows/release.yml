@@ -28,7 +28,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.PAT }}  # use the PAT instead of the GITHUB_TOKEN
       with:
-        tag_name: ${{ github.sha }}
+        tag_name: release-${{ github.sha }}  # prepend 'release-' to the SHA
         release_name: Release ${{ github.sha }}
         draft: false
         prerelease: false
