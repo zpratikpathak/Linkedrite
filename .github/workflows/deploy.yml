@@ -26,5 +26,7 @@ jobs:
           sed -i "s/SECRET_KEY = .*/SECRET_KEY = '${{ secrets.SECRET_KEY }}'/g" LinkedInAi/settings.py
           sed -i "s/DEBUG = .*/DEBUG = False/g" LinkedInAi/settings.py
           sed -i "s/ALLOWED_HOSTS = .*/ALLOWED_HOSTS = ['linkedinai.pratikpathak.com']/g" LinkedInAi/settings.py
+          .venv/bin/python manage.py makemigrations  # create new migrations based on the changes you made to your models
+          .venv/bin/python manage.py migrate  # apply and unapply migrations
           .venv/bin/python manage.py collectstatic --noinput
           sudo systemctl restart django

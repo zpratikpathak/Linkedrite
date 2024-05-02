@@ -1,3 +1,7 @@
 from django.contrib import admin
+from .models import APICounter
 
-# Register your models here.
+
+@admin.register(APICounter)
+class APICounterAdmin(admin.ModelAdmin):
+    list_display = ("id", "count")

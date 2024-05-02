@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import JsonResponse
 import json
+from .models import APICounter
 from rest_framework.throttling import UserRateThrottle
 from rest_framework.decorators import throttle_classes
 
@@ -64,6 +65,10 @@ def index(request):
 @throttle_classes([UserRateThrottle])
 class RewriteAPI(APIView):
     def post(self, request):
+        counter, created = APICounter.objects.get_or_create(pk=1)
+        counter.count += 1
+        counter.save()
+
         data = request.data
         # print(data)
         if len(data["postInput"]) <= 10:
