@@ -1,0 +1,45 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - master  # replace with your default branch if not 'master'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup .pem file
+      run: |
+        echo "${{ secrets.PEM_KEY }}" > key.pem
+
+    - name: Pack extension
+      run: |
+        google-chrome --pack-extension=ChromeExtension --pack-extension-key=key.pem
+        mv ChromeExtension.crx ChromeExtension-${{ github.sha }}.crx
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub sets this secret automatically
+      with:
+        tag_name: ${{ github.sha }}
+        release_name: Release ${{ github.sha }}
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Asset
+      id: upload_release_asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub sets this secret automatically
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}  # from the step above
+        asset_path: ./ChromeExtension-${{ github.sha }}.crx
+        asset_name: extension-${{ github.sha }}.crx
+        asset_content_type: application/x-chrome-extension
