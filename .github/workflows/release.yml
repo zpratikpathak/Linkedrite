@@ -25,7 +25,7 @@ jobs:
     - name: Pack extension
       run: |
         google-chrome --pack-extension=ChromeExtension --pack-extension-key=key.pem
-        mv ChromeExtension.crx LinkedInAI${{ steps.extract_version.outputs.version }}-${{ github.sha }}.crx
+        mv ChromeExtension.crx LinkedInAI${{ steps.extract_version.outputs.version }}.crx
 
     - name: Create Release
       id: create_release
@@ -33,8 +33,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.PAT }}  # use the PAT instead of the GITHUB_TOKEN
       with:
-        tag_name: release-${{ github.sha }}  # prepend 'release-' to the SHA
-        release_name: Release ${{ github.sha }}
+        tag_name: release-${{ steps.extract_version.outputs.version }}  # use the version as the tag
+        release_name: Release ${{ steps.extract_version.outputs.version }}  # use the version as the release name
         draft: false
         prerelease: false
 
@@ -45,6 +45,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.PAT }}  # use the PAT instead of the GITHUB_TOKEN
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}  # from the step above
-        asset_path: ./LinkedInAI${{ steps.extract_version.outputs.version }}-${{ github.sha }}.crx
-        asset_name: LinkedInAI${{ steps.extract_version.outputs.version }}-${{ github.sha }}.crx
+        asset_path: ./LinkedInAI${{ steps.extract_version.outputs.version }}.crx
+        asset_name: LinkedInAI${{ steps.extract_version.outputs.version }}.crx
         asset_content_type: application/x-chrome-extension
