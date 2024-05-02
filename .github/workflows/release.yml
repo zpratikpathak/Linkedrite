@@ -26,7 +26,7 @@ jobs:
       id: create_release
       uses: actions/create-release@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub sets this secret automatically
+        GITHUB_TOKEN: ${{ secrets.PAT }}  # use the PAT instead of the GITHUB_TOKEN
       with:
         tag_name: ${{ github.sha }}
         release_name: Release ${{ github.sha }}
@@ -37,7 +37,7 @@ jobs:
       id: upload_release_asset
       uses: actions/upload-release-asset@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub sets this secret automatically
+        GITHUB_TOKEN: ${{ secrets.PAT }}  # use the PAT instead of the GITHUB_TOKEN
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}  # from the step above
         asset_path: ./ChromeExtension-${{ github.sha }}.crx
