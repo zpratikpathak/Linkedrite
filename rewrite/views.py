@@ -114,6 +114,5 @@ class RewriteAPI(APIView):
         return Response({"success": False})
 
 
-# A comment to make the deployment on server
 def error_404(request, exception):
     return render(request, "404.html", {})
