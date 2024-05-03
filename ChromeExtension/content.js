@@ -40,9 +40,6 @@ function addRedButtons(shareBoxElement) {
         <div id="loading" style="display: none;">
           <div class="loader-3"><span></span></div>
         </div>
-        <div id="failed" style="display: none;">
-          <img src="data:image/png;base64" alt="reload" style="height:28px;width:28px;padding:5px 0px 0px 5px;">
-        </div>
       `;
 
       // Insert buttons as the first child of the parent div
@@ -79,7 +76,7 @@ function initiatePostData() {
 
 // Function to send POST request to the server for rewriting the content
 function fetchPostData(textContent, emojiToggle, htagToggle) {
-  fetch("http://127.0.0.1:8000/rewrite/", {
+  fetch("http://127.0.0.1/rewrite/", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
