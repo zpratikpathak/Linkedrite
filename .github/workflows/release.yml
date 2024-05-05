@@ -30,10 +30,11 @@ jobs:
         sed -i 's|<current version>|${{ steps.extract_version.outputs.version }}|g' ChromeExtension/content.js  # replace <current version> with the actual version
         sed -i 's|// checkForUpdates();|checkForUpdates();|g' ChromeExtension/content.js  # uncomment the checkForUpdates(); line
 
-    - name: Pack extension
+    - name: Create zip
       run: |
-        google-chrome --pack-extension=ChromeExtension --pack-extension-key=key.pem
-        mv ChromeExtension.crx LinkedInAI${{ steps.extract_version.outputs.version }}.crx
+        mkdir LinkedInAI
+        cp -r ChromeExtension/* LinkedInAI
+        zip -r LinkedInAI${{ steps.extract_version.outputs.version }}.zip LinkedInAI
 
     - name: Create Release
       id: create_release
@@ -53,6 +54,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.PAT }}  # use the PAT instead of the GITHUB_TOKEN
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}  # from the step above
-        asset_path: ./LinkedInAI${{ steps.extract_version.outputs.version }}.crx
-        asset_name: LinkedInAI${{ steps.extract_version.outputs.version }}.crx
-        asset_content_type: application/x-chrome-extension
+        asset_path: ./LinkedInAI${{ steps.extract_version.outputs.version }}.zip
+        asset_name: LinkedInAI${{ steps.extract_version.outputs.version }}.zip
+        asset_content_type: application/zip
