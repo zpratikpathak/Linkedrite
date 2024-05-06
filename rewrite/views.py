@@ -12,7 +12,7 @@ from rest_framework.decorators import throttle_classes
 
 
 load_dotenv(".env")
-api_key = os.getenv("OPENAI_API_KEY")
+api_key = os.getenv("AZURE_OPENAI_API_KEY")
 api_version = os.getenv("API_VERSION")
 azure_endpoint = os.getenv("AZURE_API_ENDPOINT")
 deployment_name = os.getenv("DEPLOYMENT_MODEL")

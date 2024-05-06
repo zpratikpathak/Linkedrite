@@ -244,6 +244,47 @@ body {
     opacity: 0.9;
   }
 
+  .blog-content {
+    max-width: 800px;
+    margin: 30px auto;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    padding: 20px;
+    line-height: 1.6;
+    text-align: center; /* Align the text to the center */
+    font-weight: 400;
+  }
+  
+  .blog-content h2 {
+    font-size: 2em;
+    color: #333;
+    margin-bottom: 0.75em;
+  }
+  
+  .blog-content p {
+    font-size: 1em;
+    color: #000000; /* Make the text darker */
+    margin-bottom: 1.5em;
+  }
+  
+  .blog-content ol {
+    margin-left: 1.5em;
+    text-align: left; /* Keep the list items left-aligned */
+  }
+  
+  .blog-content ol li {
+    margin-bottom: 1em;
+  }
+  
+  .blog-content section {
+    margin-bottom: 2em;
+  }
+  
+  .blog-content section:last-child {
+    margin-bottom: 0;
+  }
+
 @media (max-width: 768px) {
   .actions{
     flex-direction: column;
