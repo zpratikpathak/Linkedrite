@@ -3,6 +3,7 @@
 *.pyo
 __pycache__/
 *.sqlite3
+tmp.py
 
 # Static files
 staticfiles/

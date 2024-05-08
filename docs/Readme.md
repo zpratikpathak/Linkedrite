@@ -13,10 +13,11 @@ LinkedInAi 🤖 is a tool designed to help you craft professional LinkedIn posts
 
 LinkedInAi offers a range of features to help you craft professional LinkedIn posts:
 
-1. **Grammar Correction**: LinkedInAi can correct grammatical errors in your posts to ensure they are professional and polished.
-2. **Context Generation**: LinkedInAi can generate relatable context for your posts based on the initial input.
-3. **Emoji Addition**: LinkedInAi can add relevant emojis to your posts to make them more engaging.
-4. **Post Formatting**: LinkedInAi can format your posts to ensure they are easy to read and professional-looking.
+1. **Engaging First Line**: LinkedInAi writes an engaging first line that grabs the reader's attention and compels them to read the entire article. With AI-generated suggestions, you can create a captivating opening that piques curiosity and entices readers to explore the rest of your content.
+2. **Grammar Correction**: LinkedInAi can correct grammatical errors in your posts to ensure they are professional and polished.
+3. **Context Generation**: LinkedInAi can generate relatable context for your posts based on the initial input.
+4. **Emoji Addition**: LinkedInAi can add relevant emojis to your posts to make them more engaging.
+5. **Post Formatting**: LinkedInAi can format your posts to ensure they are easy to read and professional-looking.
 
 # Usage 🚀
 
