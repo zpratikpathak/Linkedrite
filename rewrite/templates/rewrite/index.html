@@ -123,15 +123,22 @@
       <section>
         <h2>How to Install 🛠️</h2>
         <p>
-          You can install LinkedIn AI Rewrite, your LinkedIn Post Generator, by following these steps:
-          <ol>
-            <li>Step 1: Description of step 1</li>
-            <li>Step 2: Description of step 2</li>
-            <li>Step 3: Description of step 3</li>
-            <!-- Add more steps as necessary -->
-          </ol>
+            You can install LinkedIn AI Rewrite, your LinkedIn Post Generator, by following these steps:
+            <ol>
+                <li>📚 <strong>Install via Poetry:</strong> Run the command <code>poetry run</code>. Make sure you have already installed Poetry. If not, run this command <code>pip install poetry</code>.</li>
+                <li>🔄 <strong>OR Install via Requirements.txt:</strong> Run the command <code>pip install -r requirements.txt</code>.</li>
+                <li>🗂️ <strong>Setup .ENV file:</strong> Create a `.env` file in the root directory and add the following credentials:
+                    <pre>
+                        AZURE_OPENAI_API_KEY = "xxxxxxxxxxxxxxxxxxxxxxxx"
+                        AZURE_API_ENDPOINT = "https://xxxxxxxx.openai.azure.com/"
+                        API_VERSION = "2023-12-01-preview"
+                        DEPLOYMENT_MODEL = "XXXXXXXXXXXXXXXXXXXX"
+                    </pre>
+                    <strong>Note:</strong> Not sure how to get these credentials? <a href="#">Click here</a> to find out.
+                </li>
+            </ol>
         </p>
-      </section>
+    </section>
     
       <section>
         <h2>How It Works 🧠</h2>
