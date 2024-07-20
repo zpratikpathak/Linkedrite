@@ -29,7 +29,7 @@ jobs:
 
     - name: Modify content.js
       run: |
-        sed -i 's|  fetch("http://127.0.0.1/rewrite/", {|  fetch("https://linkedinai.pratikpathak.com/rewrite/", {|g' ChromeExtension/content.js
+        sed -i 's|  fetch("http://127.0.0.1/rewrite/", {|  fetch("https://linkedrite.pratikpathak.com/rewrite/", {|g' ChromeExtension/content.js
         sed -i 's|<current version>|${{ steps.extract_version.outputs.version }}|g' ChromeExtension/content.js
         sed -i 's|// checkForUpdates();|checkForUpdates();|g' ChromeExtension/content.js
 
@@ -38,9 +38,9 @@ jobs:
 
     - name: Create zip
       run: |
-        mkdir LinkedInAI
-        cp -r ChromeExtension/* LinkedInAI
-        zip -r LinkedInAI${{ steps.extract_version.outputs.version }}.zip LinkedInAI
+        mkdir Linkedrite
+        cp -r ChromeExtension/* Linkedrite
+        zip -r Linkedrite${{ steps.extract_version.outputs.version }}.zip Linkedrite
 
     - name: Create Release
       id: create_release
@@ -49,7 +49,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.PAT }}  # use the PAT instead of the GITHUB_TOKEN
       with:
         tag_name: release-${{ steps.extract_version.outputs.version }}  # use the version as the tag
-        release_name: LinkedInAI ${{ steps.extract_version.outputs.version }}  # use the version as the release name
+        release_name: Linkedrite ${{ steps.extract_version.outputs.version }}  # use the version as the release name
         draft: false
         prerelease: false
 
@@ -60,6 +60,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.PAT }}  # use the PAT instead of the GITHUB_TOKEN
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}  # from the step above
-        asset_path: ./LinkedInAI${{ steps.extract_version.outputs.version }}.zip
-        asset_name: LinkedInAI${{ steps.extract_version.outputs.version }}.zip
+        asset_path: ./Linkedrite${{ steps.extract_version.outputs.version }}.zip
+        asset_name: Linkedrite${{ steps.extract_version.outputs.version }}.zip
         asset_content_type: application/zip
