@@ -1,0 +1,71 @@
+name: Deploy Docker Container
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Modify settings.py
+      run: |
+        sed -i "s/SECRET_KEY = .*/SECRET_KEY = '${{ secrets.SECRET_KEY }}'/g" LinkedInAi/settings.py
+        sed -i "s/DEBUG = .*/DEBUG = False/g" LinkedInAi/settings.py
+        sed -i "s/ALLOWED_HOSTS = .*/ALLOWED_HOSTS = ['linkedinai.pratikpathak.com']/g" LinkedInAi/settings.py
+
+    - name: Create .env file
+      run: echo "${{ secrets.ENVIRONMENTAL_VARIABLES }}" > .env
+
+    - name: Build Docker image
+      run: docker build . -t linkedrite:latest
+
+    - name: Save Docker image
+      run: docker save linkedrite:latest > linkedrite.tar
+
+    - name: Remove existing Docker image file on server
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        port: ${{ secrets.SSH_PORT }}
+        script: |
+          rm -f ~/home/linkedrite.tar
+
+    - name: Copy Docker image to server
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        port: ${{ secrets.SSH_PORT }}
+        source: "linkedrite.tar"
+        target: "~/home/"
+
+    - name: Load Docker image and run container on server
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        port: ${{ secrets.SSH_PORT }}
+        script: |
+          # Load the Docker image, overwriting any existing image with the same name
+          docker load < ~/home/linkedrite.tar
+          
+          # Check if the container is running, stop and remove it if it is
+          if [ $(docker ps -q -f name=linkedrite) ]; then
+            docker stop linkedrite
+            docker rm linkedrite
+          # Check if the container exists (but is stopped), remove it if it does
+          elif [ $(docker ps -aq -f status=exited -f name=linkedrite) ]; then
+            docker rm linkedrite
+          fi
+          
+          # Run the new container
+          docker run -d --name linkedrite -p 8000:8000 linkedrite:latest
