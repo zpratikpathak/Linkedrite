@@ -55,4 +55,4 @@ RUN python manage.py collectstatic --noinput
 EXPOSE 8000
 
 # Use gunicorn as the entry point to serve the app. Adjust the number of workers as necessary.
-CMD ["gunicorn", "LinkedInAi.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]
+CMD ["gunicorn", "Linkedrite.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]
