@@ -57,7 +57,7 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         port: ${{ secrets.SSH_PORT }}
         script: |
-          # Remove any existing image with the same name before loading a new one
+          # Remove any existing image with the same name before loading a new one (if it exists)
           docker image inspect linkedrite:latest > /dev/null 2>&1 && docker image rm linkedrite:latest
           docker load < ~/home/linkedrite.tar
           
