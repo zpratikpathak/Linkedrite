@@ -85,7 +85,7 @@ class RewriteAPI(APIView):
         else:
             prompt += " Do not add hashtags."
         prompt += "\n Now rewrite this text: " + data["postInput"]
-        print("Prompt:", prompt)
+        # print("Prompt:", prompt)
 
         # prompt = "Rewrite the following LinkedIn post to make it more engaging, attractive, and professional. Correct any grammar errors, maintain the same number of paragraphs and format, and use indirect speech. The post is public, so it should be clear and precise. Do not enclose the text in quotes or add blank spaces at the start or end of the text."
         # if data["emojiNeeded"]:
@@ -104,7 +104,7 @@ class RewriteAPI(APIView):
             prompt=prompt,
             max_tokens=1000,
         )
-        print("Answer", response.choices[0].text)
+        # print("Answer", response.choices[0].text)
         # removing starting and ending blank lines
         response.choices[0].text = response.choices[0].text.strip()
 
