@@ -73,7 +73,7 @@ jobs:
           docker load < ~/home/linkedrite.tar          
           
           # Run the new container
-          docker run -d --name linkedrite -p 8000:8000 linkedrite:latest
+          docker run -d --restart always --name linkedrite -p 8000:8000 linkedrite:latest
 
           # Remove the linkedrite.tar file after loading and running the container
           rm -f ~/home/linkedrite.tar
