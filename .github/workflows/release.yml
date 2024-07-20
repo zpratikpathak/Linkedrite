@@ -24,8 +24,8 @@ jobs:
       run: |
         echo "::set-output name=version::$(jq -r .version ChromeExtension/manifest.json)"
 
-    - name: Print content.js before
-      run: cat ChromeExtension/content.js
+    # - name: Print content.js before
+    #   run: cat ChromeExtension/content.js
 
     - name: Modify content.js
       run: |
@@ -33,11 +33,14 @@ jobs:
         sed -i 's|<current version>|${{ steps.extract_version.outputs.version }}|g' ChromeExtension/content.js
         sed -i 's|// checkForUpdates();|checkForUpdates();|g' ChromeExtension/content.js
 
-    - name: Print content.js after
-      run: cat ChromeExtension/content.js
+    # - name: Print content.js after
+    #   run: cat ChromeExtension/content.js
 
     - name: Create zip
       run: |
+        if [ -d "Linkedrite" ]; then
+          rm -rf Linkedrite
+        fi
         mkdir Linkedrite
         cp -r ChromeExtension/* Linkedrite
         zip -r Linkedrite${{ steps.extract_version.outputs.version }}.zip Linkedrite
