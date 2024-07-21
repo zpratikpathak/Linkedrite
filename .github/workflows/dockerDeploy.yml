@@ -37,7 +37,6 @@ jobs:
         script: |
           if [ -f "~/home/linkedrite.tar" ]; then
             rm -f ~/home/linkedrite.tar
-            rm -rf ~/home
           fi
 
           if [ ! -d "~/home" ]; then
