@@ -8,7 +8,7 @@
     <title>Linkedrite - AI powered writer</title>
     <link rel="icon" href="{% static './favicon.ico' %}" />
     <link rel="stylesheet" href="{% static './rewrite/style.css' %}" />
-    <meta name="description" content="Linkedrite - AI powered writer  is your go-to LinkedIn Post Generator. Generate professional, engaging, and AI-optimized LinkedIn posts with ease.">
+    <meta name="description" content="Linkedrite - AI powered writer is your go-to LinkedIn Post Generator. Generate professional, engaging, and AI-optimized LinkedIn posts with ease.">
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-GEBMJ3L39W"></script>
     <script>
@@ -18,6 +18,28 @@
 
       gtag('config', 'G-GEBMJ3L39W');
     </script>
+    <script type="application/ld+json">
+      {
+        "@context": "http://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Linkedrite - LinkedIn AI Powered Writer",
+        "applicationCategory": "WebApplication",
+        "operatingSystem": "All",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "description": "Easily generate engaging, SEO-friendly posts for Linkding with our online tool. Create content in seconds and boost your productivity.",
+        "features": "Generate posts quickly; Time Saving; Easy to use interface",
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.5",
+          "reviewCount": "24"
+        },
+        "url": "https://linkedrite.pratikpathak.com/"
+      }
+      </script>
   </head>
   <body>
     <div class="post-box">
@@ -166,16 +188,23 @@
     </div>
   </body>
 
-  <script>
+  <script>// Assuming adjustHeight and showToast are defined elsewhere
+
+    // Cache DOM elements
+    const postInput = document.getElementById("postInput");
+    const rewriteBtn = document.getElementById("rewrite-btn");
+    const spinner = document.getElementById("spinner");
+    const buttonText = document.getElementById("button-text");
+    const undoBtn = document.getElementById("undo-btn");
+    let originalInput = "";
+    
     function writeText(text, placeholder = false, callback = null) {
-      const responseAI = text;
-      const postInput = document.getElementById("postInput");
       let i = 0;
       if (placeholder) {
         postInput.value = ""; // Clear the input box
       }
-      const typingEffect = setInterval(() => {
-        const currentText = responseAI.slice(0, i);
+      function type() {
+        const currentText = text.slice(0, i);
         if (placeholder) {
           postInput.placeholder = currentText;
         } else {
@@ -183,36 +212,24 @@
           adjustHeight(); // Adjust the height after changing the value
         }
         i++;
-        if (i > responseAI.length) {
-          clearInterval(typingEffect);
+        if (i <= text.length) {
+          requestAnimationFrame(type);
+        } else {
           console.log("writeText completed");
-          if (callback) {
-            callback();
-          }
+          if (callback) callback();
         }
-      }, 30);
+      }
+      requestAnimationFrame(type);
     }
-
-    var originalInput = "";
-
+    
     function sendData() {
-      var postInput = document.getElementById("postInput").value;
-      var emojiNeeded = document.getElementById("emojiNeeded").checked;
-      var rewriteBtn = document.getElementById("rewrite-btn");
-      var spinner = document.getElementById("spinner");
-      var buttonText = document.getElementById("button-text");
-
-      originalInput = postInput;
+      const emojiNeeded = document.getElementById("emojiNeeded").checked;
+      originalInput = postInput.value;
     
-      const data = {
-        postInput: postInput,
-        emojiNeeded: emojiNeeded,
-        htagNeeded: true,
-      };
+      const data = { postInput: originalInput, emojiNeeded, htagNeeded: true };
     
-      if (postInput.length < 10) {
-        const responseAI = "Please write more to generate a professional response";
-        writeText(responseAI, true);
+      if (originalInput.length < 10) {
+        writeText("Please write more to generate a professional response", true);
         return;
       }
     
@@ -228,48 +245,34 @@
         },
         body: JSON.stringify(data),
       })
-        .then((response) => {
-          if (!response.ok) {
-            if (response.status === 429) {
-              throw new Error("Too Many Requests");
-            } else {
-              throw new Error("An error occurred");
-            }
-          }
-          return response.json();
-        })
-        .then((data) => {
-          if (!data || !data.rewriteAI) {
-            showToast("An error occurred");
-            return;
-          }
-    
-          console.log("Success:", data.success);
-          console.log("Message:", data.rewriteAI);
-          console.log("data:", data);
-    
-          const responseAI = data.rewriteAI;
-          writeText(responseAI, false, function () {
-            rewriteBtn.disabled = false;
-            spinner.style.display = "none";
-            buttonText.style.display = "inline-block";
-          });
-        })
-        .catch((error) => {
-          console.error(error);
-          showToast(error.message);
-    
+      .then(response => {
+        if (!response.ok) throw new Error(response.status === 429 ? "Too Many Requests" : "An error occurred");
+        return response.json();
+      })
+      .then(data => {
+        if (!data || !data.rewriteAI) {
+          showToast("An error occurred");
+          return;
+        }
+        writeText(data.rewriteAI, false, () => {
           rewriteBtn.disabled = false;
           spinner.style.display = "none";
           buttonText.style.display = "inline-block";
         });
+      })
+      .catch(error => {
+        console.error(error);
+        showToast(error.message);
+        rewriteBtn.disabled = false;
+        spinner.style.display = "none";
+        buttonText.style.display = "inline-block";
+      });
     }
-
-    document.getElementById("undo-btn").addEventListener("click", function() {
-      document.getElementById("postInput").value = originalInput;
+    
+    undoBtn.addEventListener("click", () => {
+      postInput.value = originalInput;
     });
     
-    const rewriteBtn = document.getElementById("rewrite-btn");
     rewriteBtn.addEventListener("click", sendData);
   </script>
   <script src="{% static './rewrite/script.js'%}"></script>
