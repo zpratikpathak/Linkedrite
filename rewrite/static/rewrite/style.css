@@ -232,16 +232,19 @@ body {
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
-    background: #333;
-    color: #fff;
-    padding: 10px 20px;
+    background-color: #ea0707;
+    color: #ffffff;
+    padding: 10px;
     border-radius: 5px;
+    text-align: center;
+    width: fit-content;
+    margin: 0 auto;
     opacity: 0;
     transition: opacity 0.5s ease-in-out;
   }
   
   .toast.show {
-    opacity: 0.9;
+    opacity: 1;
   }
 
   .blog-content {

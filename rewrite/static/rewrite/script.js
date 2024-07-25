@@ -24,6 +24,10 @@ function showToast(message) {
   toast.textContent = message;
   toast.style.backgroundColor = "#ea0707"; // Set the background color of the toast
   toast.style.color = "#ffffff"; // Set the text color of the toast
+  toast.style.padding = "10px"; // Add padding for better text distribution
+  toast.style.textAlign = "center"; // Center the text
+  toast.style.width = "fit-content"; // Adjust width to fit content
+  toast.style.margin = "0 auto"; // Center the toast horizontally
   document.body.appendChild(toast);
 
   setTimeout(() => {
@@ -37,3 +41,12 @@ function showToast(message) {
     }, 500);
   }, 2000);
 }
+
+const emojiCheckbox = document.getElementById("emojiNeeded");
+emojiCheckbox.addEventListener("change", function () {
+  if (this.checked) {
+    showToast("Emojis will now be included in your posts!");
+  } else {
+    showToast("Emojis will be excluded from your posts.");
+  }
+});
