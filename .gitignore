@@ -4,6 +4,7 @@
 __pycache__/
 *.sqlite3
 tmp.py
+tmp.html
 
 # Static files
 staticfiles/
