@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "linkedinai"
+name = "linkedrite"
 version = "0.1.0"
 description = ""
 authors = ["Pratik Pathak <pratikpathak200@gmail.com>"]
