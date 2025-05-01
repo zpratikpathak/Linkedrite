@@ -1,21 +1,15 @@
-[tool.poetry]
+[project]
 name = "linkedrite"
 version = "0.1.0"
-description = ""
-authors = ["Pratik Pathak <pratikpathak200@gmail.com>"]
-readme = "README.md"
-
-[tool.poetry.dependencies]
-python = "^3.8"
-django = "4.1.13"
-openai = "^1.23.6"
-python-dotenv = "^1.0.1"
-djangorestframework = "^3.15.1"
-django-cors-headers = "^4.3.1"
-whitenoise = "^6.6.0"
-gunicorn = "^22.0.0"
-
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+description = "Add your description here"
+readme = "docs/readme.md"
+requires-python = ">=3.13"
+dependencies = [
+    "django>=5.2",
+    "django-cors-headers>=4.7.0",
+    "djangorestframework>=3.16.0",
+    "gunicorn>=23.0.0",
+    "openai>=1.76.2",
+    "python-dotenv>=1.1.0",
+    "whitenoise>=6.9.0",
+]

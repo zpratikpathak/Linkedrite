@@ -1,0 +1,10 @@
+.git
+.github
+.gitignore
+.vscode
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache
+node_modules

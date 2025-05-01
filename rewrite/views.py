@@ -57,8 +57,8 @@ def index(request):
 #             max_tokens=1000,
 #             # best_of=5,
 #         )
-#         print(response.choices[0].text)
-#         return JsonResponse({"success": True, "rewriteAI": response.choices[0].text})
+#         print(response.choices[0].message.content)
+#         return JsonResponse({"success": True, "rewriteAI": response.choices[0].message.content})
 #     return JsonResponse({"success": False})
 
 
@@ -77,14 +77,25 @@ class RewriteAPI(APIView):
                 status=400,
             )
 
-        prompt = "Consider yourself writing a linkedIn post now Rewrite the following text and make it more engaging and attractive. Correct the Grammar. Keep the number of paragraphs same. keep the format of post same. It should have professional tone. The post is public, it should be in indirect speech. The post should should be clear and precise. Only return the rewritten text. Do not enclose the text in quotes. Do not add Blank space starting and ending of the text. If there is question in the post then Rewrite the question in a more professional and engaging manner "
-        if data["emojiNeeded"]:
-            prompt += " Add emojis to make it more engaging."
-        if data["htagNeeded"]:
-            prompt += " Add hashtags to make it more engaging."
-        else:
-            prompt += " Do not add hashtags."
-        prompt += "\n Now rewrite this text: " + data["postInput"]
+        # prompt = (
+        #     "You are an expert LinkedIn content writer. Rewrite the following post to be more engaging, "
+        #     "professional, and grammatically correct. Instructions:\n"
+        #     "- Maintain the original number of paragraphs and overall format\n"
+        #     "- Use professional tone and indirect speech\n"
+        #     "- Make the content clear, precise, and engaging\n"
+        #     "- Rewrite any questions in a more professional manner\n"
+        #     "- Provide only the rewritten text without quotation marks or extra spaces\n"
+        # )
+
+        # if data["emojiNeeded"]:
+        #     prompt += "- Include appropriate emojis to enhance engagement\n"
+
+        # if data["htagNeeded"]:
+        #     prompt += "- Add relevant hashtags to increase visibility\n"
+        # else:
+        #     prompt += "- Do not include hashtags\n"
+
+        # prompt += "\nOriginal post:\n" + data["postInput"]
         # print("Prompt:", prompt)
 
         # prompt = "Rewrite the following LinkedIn post to make it more engaging, attractive, and professional. Correct any grammar errors, maintain the same number of paragraphs and format, and use indirect speech. The post is public, so it should be clear and precise. Do not enclose the text in quotes or add blank spaces at the start or end of the text."
@@ -99,16 +110,44 @@ class RewriteAPI(APIView):
 
         # print("Prompt:", prompt)
 
-        response = client.completions.create(
-            model=deployment_name,
-            prompt=prompt,
-            max_tokens=1000,
-        )
-        # print("Answer", response.choices[0].text)
-        # removing starting and ending blank lines
-        response.choices[0].text = response.choices[0].text.strip()
+        messages = [
+            {
+                "role": "system",
+                "content": "You are an expert LinkedIn content writer who creates engaging, professional content with correct grammar.",
+            },
+            {
+                "role": "user",
+                "content": f"""
+        Rewrite the following LinkedIn post according to these guidelines:
+        - Maintain the original number of paragraphs and overall format
+        - Use professional tone and indirect speech
+        - Make the content clear, precise, and engaging
+        - Rewrite any questions in a more professional manner
+        {"- Include appropriate emojis to enhance engagement" if data["emojiNeeded"] else ""}
+        {"- Add relevant hashtags to increase visibility" if data["htagNeeded"] else "- Do not include hashtags"}
 
-        return Response({"success": True, "rewriteAI": response.choices[0].text})
+        Original post:
+        {data["postInput"]}
+        """,
+            },
+        ]
+
+        response = client.chat.completions.create(
+            messages=messages,
+            model=deployment_name,
+            max_tokens=1000,
+            temperature=0.7,  # adding temperature to introduce creativity
+            response_format={"type": "text"},
+        )
+        # print("Answer", response.choices[0].message.content)
+        # removing starting and ending blank lines
+        response.choices[0].message.content = response.choices[
+            0
+        ].message.content.strip()
+
+        return Response(
+            {"success": True, "rewriteAI": response.choices[0].message.content}
+        )
 
     def get(self, request):
         return Response({"success": False})
