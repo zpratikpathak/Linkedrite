@@ -62,6 +62,12 @@ DEPLOYMENT_MODEL = "XXXXXXXXXXXXXXXXXXXX"
 **Note**: Not sure how to get these credentials? Click here to find out.
 
 # How to run 🏃‍♂️
+## Run via UV
+```cmd
+uv run python manage.py runserver
+```
+
+## Run using python
 ```cmd
 python manage.py runserver
 ```
