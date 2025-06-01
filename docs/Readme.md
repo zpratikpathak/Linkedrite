@@ -33,12 +33,12 @@ For detailed usage instructions, please refer to the Installation section.
 
 You can install Linkedrite using either Poetry or the requirements.txt file.
 
-## Install via Poetry 📚
+## Install via UV 📚
 
 ```cmd
-poetry run
+poetry sync
 ```
->Make sure you have already installed Poetry, if not run this command `pip install poetry`
+>Make sure you have already installed UV, if not run this command `pip install uv`
 
 <div align="center">
 
