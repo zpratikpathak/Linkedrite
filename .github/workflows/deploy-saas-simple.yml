@@ -1,0 +1,128 @@
+name: Deploy LinkedRite SaaS (Simple)
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - simple-deploy
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Create .env file
+      run: echo "${{ secrets.ENVIRONMENTAL_VARIABLES }}" > .env
+
+    - name: Build Docker image
+      run: |
+        docker build . -t linkedrite:latest
+        docker tag linkedrite:latest linkedrite:${{ github.sha }}
+
+    - name: Save Docker image
+      run: |
+        docker save linkedrite:latest | gzip > linkedrite.tar.gz
+
+    - name: Create deployment script
+      run: |
+        cat > deploy-simple.sh << 'EOF'
+        #!/bin/bash
+        set -e
+        
+        echo "Starting LinkedRite SaaS deployment (Simple mode)..."
+        
+        # Navigate to deployment directory
+        cd ~/linkedrite
+        
+        # Load Docker image
+        echo "Loading Docker image..."
+        docker load < linkedrite.tar.gz
+        
+        # Stop and remove old container (if exists)
+        echo "Stopping old container..."
+        docker stop linkedrite || true
+        docker rm linkedrite || true
+        
+        # Create volume for persistent data if it doesn't exist
+        docker volume create linkedrite_data || true
+        
+        # Run new container
+        echo "Starting new container..."
+        docker run -d \
+          --name linkedrite \
+          --restart always \
+          -p 8000:8000 \
+          -v linkedrite_data:/app/data \
+          -v linkedrite_media:/app/media \
+          -v linkedrite_static:/app/staticfiles \
+          --env-file .env \
+          linkedrite:latest
+        
+        # Wait for container to start
+        echo "Waiting for container to start..."
+        sleep 10
+        
+        # Check container status
+        if docker ps | grep -q linkedrite; then
+          echo "✅ Container is running"
+          
+          # Show container logs
+          echo "Recent logs:"
+          docker logs --tail=50 linkedrite
+          
+          # Test if application responds
+          if curl -f -s -o /dev/null -w "%{http_code}" http://localhost:8000 | grep -q "200\|302"; then
+            echo "✅ Application is responding on port 8000"
+          else
+            echo "⚠️  Application might still be starting up..."
+          fi
+        else
+          echo "❌ Container failed to start"
+          docker logs linkedrite
+          exit 1
+        fi
+        
+        # Clean up
+        echo "Cleaning up..."
+        rm -f linkedrite.tar.gz
+        
+        # Remove old images
+        docker image prune -f
+        
+        echo "🎉 Deployment completed!"
+        echo "LinkedRite is accessible at http://$(hostname -I | awk '{print $1}'):8000"
+        EOF
+        
+        chmod +x deploy-simple.sh
+
+    - name: Copy files to server
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        port: ${{ secrets.SSH_PORT }}
+        source: "linkedrite.tar.gz,.env,deploy-simple.sh"
+        target: "~/linkedrite/"
+        strip_components: 0
+        overwrite: true
+
+    - name: Execute deployment on server
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        port: ${{ secrets.SSH_PORT }}
+        script: |
+          cd ~/linkedrite
+          ./deploy-simple.sh
+
+    - name: Cleanup local files
+      if: always()
+      run: |
+        rm -f linkedrite.tar.gz
+        rm -f .env
+        rm -f deploy-simple.sh

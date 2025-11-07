@@ -1,0 +1,211 @@
+name: Deploy LinkedRite SaaS
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Create .env file
+      run: echo "${{ secrets.ENVIRONMENTAL_VARIABLES }}" > .env
+
+    - name: Create docker-compose.prod.yml
+      run: |
+        cat > docker-compose.prod.yml << 'EOF'
+        services:
+          web:
+            image: linkedrite:latest
+            restart: always
+            ports:
+              - "8000:8000"
+            env_file:
+              - .env
+            depends_on:
+              - db
+              - redis
+            networks:
+              - linkedrite-network
+            healthcheck:
+              test: ["CMD", "curl", "-f", "http://localhost:8000/admin/"]
+              interval: 30s
+              timeout: 10s
+              retries: 3
+              start_period: 40s
+          
+          db:
+            image: postgres:15-alpine
+            restart: always
+            env_file:
+              - .env
+            environment:
+              POSTGRES_DB: ${POSTGRES_DB:-linkedrite}
+              POSTGRES_USER: ${POSTGRES_USER:-linkedrite}
+              POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-linkedrite123}
+            volumes:
+              - postgres_data:/var/lib/postgresql/data
+            networks:
+              - linkedrite-network
+            healthcheck:
+              test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-linkedrite}"]
+              interval: 10s
+              timeout: 5s
+              retries: 5
+          
+          redis:
+            image: redis:7-alpine
+            restart: always
+            command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+            volumes:
+              - redis_data:/data
+            networks:
+              - linkedrite-network
+            healthcheck:
+              test: ["CMD", "redis-cli", "ping"]
+              interval: 10s
+              timeout: 5s
+              retries: 5
+        
+        networks:
+          linkedrite-network:
+            driver: bridge
+        
+        volumes:
+          postgres_data:
+          redis_data:
+        EOF
+
+    - name: Build Docker image
+      run: |
+        docker build . -t linkedrite:latest
+        docker tag linkedrite:latest linkedrite:${{ github.sha }}
+
+    - name: Save Docker images
+      run: |
+        docker save linkedrite:latest linkedrite:${{ github.sha }} | gzip > linkedrite-images.tar.gz
+
+    - name: Create deployment script
+      run: |
+        cat > deploy.sh << 'EOF'
+        #!/bin/bash
+        set -e
+        
+        echo "Starting LinkedRite SaaS deployment..."
+        
+        # Navigate to deployment directory
+        cd ~/linkedrite
+        
+        # Load Docker images
+        echo "Loading Docker images..."
+        docker load < linkedrite-images.tar.gz
+        
+        # Backup current .env if exists
+        if [ -f .env ]; then
+          cp .env .env.backup.$(date +%Y%m%d_%H%M%S)
+        fi
+        
+        # Stop and remove old containers (if any)
+        echo "Stopping old containers..."
+        docker-compose -f docker-compose.prod.yml down || true
+        
+        # Remove old images to free up space
+        docker image prune -f
+        
+        # Start services
+        echo "Starting services..."
+        docker-compose -f docker-compose.prod.yml up -d
+        
+        # Wait for database to be ready
+        echo "Waiting for database to be ready..."
+        sleep 10
+        
+        # Run migrations
+        echo "Running database migrations..."
+        docker-compose -f docker-compose.prod.yml exec -T web python manage.py migrate --noinput
+        
+        # Create/update admin account
+        echo "Setting up admin account..."
+        docker-compose -f docker-compose.prod.yml exec -T web python manage.py create_default_admin || true
+        
+        # Collect static files
+        echo "Collecting static files..."
+        docker-compose -f docker-compose.prod.yml exec -T web python manage.py collectstatic --noinput
+        
+        # Check container health
+        echo "Checking container health..."
+        docker-compose -f docker-compose.prod.yml ps
+        
+        # Clean up
+        echo "Cleaning up..."
+        rm -f linkedrite-images.tar.gz
+        
+        # Show logs from last 50 lines
+        echo "Recent logs from web container:"
+        docker-compose -f docker-compose.prod.yml logs --tail=50 web
+        
+        echo "Deployment completed successfully!"
+        echo "LinkedRite is now accessible at http://$(hostname -I | awk '{print $1}'):8000"
+        EOF
+        
+        chmod +x deploy.sh
+
+    - name: Copy files to server
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        port: ${{ secrets.SSH_PORT }}
+        source: "linkedrite-images.tar.gz,docker-compose.prod.yml,.env,deploy.sh"
+        target: "~/linkedrite/"
+        strip_components: 0
+        overwrite: true
+        rm: true
+
+    - name: Execute deployment on server
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        port: ${{ secrets.SSH_PORT }}
+        script: |
+          cd ~/linkedrite
+          ./deploy.sh
+          
+          # Verify deployment
+          echo "Verifying deployment..."
+          sleep 5
+          
+          # Check if web container is running
+          if docker-compose -f docker-compose.prod.yml ps | grep -q "linkedrite-web.*Up.*8000"; then
+            echo "✅ Web container is running on port 8000"
+          else
+            echo "❌ Web container is not running properly"
+            docker-compose -f docker-compose.prod.yml logs web
+            exit 1
+          fi
+          
+          # Test if application responds
+          if curl -f -s -o /dev/null -w "%{http_code}" http://localhost:8000 | grep -q "200\|302"; then
+            echo "✅ Application is responding on port 8000"
+          else
+            echo "❌ Application is not responding"
+            docker-compose -f docker-compose.prod.yml logs --tail=100
+            exit 1
+          fi
+          
+          echo "🎉 Deployment successful! LinkedRite is running on port 8000"
+
+    - name: Cleanup local files
+      if: always()
+      run: |
+        rm -f linkedrite-images.tar.gz
+        rm -f docker-compose.prod.yml
+        rm -f .env
+        rm -f deploy.sh

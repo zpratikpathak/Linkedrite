@@ -1,9 +1,9 @@
-name: Deploy Docker Container
+name: Deploy Docker Container (Disabled)
 
 on:
   push:
     branches:
-      - master
+      - disabled-branch-never-use
 
 jobs:
   build-and-deploy:
