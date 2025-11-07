@@ -135,7 +135,28 @@ docker-compose exec web python manage.py create_default_admin
 docker-compose exec web python manage.py createsuperuser
 ```
 
-### 5. ModuleNotFoundError: No module named 'dj_database_url'
+### 5. CSRF Verification Failed (403 Forbidden)
+
+**Error**: CSRF verification failed when trying to login/signup
+
+**Solution**:
+```bash
+# Quick fix - Add to .env file
+SITE_URL=http://YOUR-SERVER-IP:8000
+CSRF_TRUSTED_ORIGINS=http://YOUR-SERVER-IP:8000
+DEBUG=False
+
+# Or run the fix script
+chmod +x scripts/fix-csrf-error.sh
+./scripts/fix-csrf-error.sh
+
+# Restart container
+docker-compose -f docker-compose.prod.yml restart web
+```
+
+**Important**: Replace YOUR-SERVER-IP with your actual server IP or domain name.
+
+### 6. ModuleNotFoundError: No module named 'dj_database_url'
 
 **Error**: Missing Python dependencies in container
 

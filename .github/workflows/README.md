@@ -48,6 +48,11 @@ Configure these in your repository settings under Secrets and variables > Action
   DEBUG=False
   ALLOWED_HOSTS=your-domain.com,localhost
   
+  # IMPORTANT: Set these to fix CSRF errors
+  SITE_URL=http://your-server-ip:8000  # Or https://your-domain.com
+  CSRF_TRUSTED_ORIGINS=http://your-server-ip:8000  # Must match how you access the site
+  USE_HTTPS=False  # Set to True if using HTTPS
+  
   # Database (for docker-compose deployment)
   POSTGRES_DB=linkedrite
   POSTGRES_USER=linkedrite

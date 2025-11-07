@@ -287,15 +287,21 @@ docker-compose up --build web db
    - Or run: `bash scripts/fix-port-8000.sh`
    - See [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) for detailed solutions
 
-2. **Email not sending**: Check EMAIL_HOST_PASSWORD and EMAIL_USE_TLS settings
+2. **CSRF Verification Failed (403 error on login/signup)**:
+   - Add to .env: `SITE_URL=http://your-server-ip:8000`
+   - Add to .env: `CSRF_TRUSTED_ORIGINS=http://your-server-ip:8000`
+   - Run: `bash scripts/fix-csrf-error.sh`
+   - Clear browser cookies and try again
 
-3. **Migration errors**: Run `python manage.py migrate --run-syncdb`
+3. **Email not sending**: Check EMAIL_HOST_PASSWORD and EMAIL_USE_TLS settings
 
-4. **Static files not loading**: Run `python manage.py collectstatic`
+4. **Migration errors**: Run `python manage.py migrate --run-syncdb`
 
-5. **Import errors**: Ensure all packages in requirements.txt are installed
+5. **Static files not loading**: Run `python manage.py collectstatic`
 
-6. **Database connection issues**: 
+6. **Import errors**: Ensure all packages in requirements.txt are installed
+
+7. **Database connection issues**: 
    - For PostgreSQL/MySQL, ensure the database server is running
    - Check credentials in `.env` file
    - For Docker, ensure containers can communicate

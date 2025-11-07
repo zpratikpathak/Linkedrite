@@ -263,3 +263,48 @@ LOGOUT_REDIRECT_URL = "/"
 
 # Custom User Model (we'll create this next)
 AUTH_USER_MODEL = "accounts.CustomUser"
+
+# Security Settings for Production
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# CSRF Settings - Fix for CSRF verification failed error
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',') if os.getenv('CSRF_TRUSTED_ORIGINS') else []
+
+# If SITE_URL is set, add it to CSRF_TRUSTED_ORIGINS
+SITE_URL = os.getenv('SITE_URL', '')
+if SITE_URL:
+    CSRF_TRUSTED_ORIGINS.append(SITE_URL)
+    # Also add without trailing slash
+    CSRF_TRUSTED_ORIGINS.append(SITE_URL.rstrip('/'))
+
+# Add localhost variants for development
+if DEBUG:
+    CSRF_TRUSTED_ORIGINS.extend([
+        'http://localhost:8000',
+        'http://127.0.0.1:8000',
+        'http://localhost:8001',
+        'http://127.0.0.1:8001',
+    ])
+
+# Security headers for production
+if not DEBUG:
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
+    
+# Session security
+SESSION_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = True
+
+# In production with HTTPS
+if os.getenv('USE_HTTPS', 'False') == 'True':
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_SSL_REDIRECT = True
+
+# CSRF Cookie settings
+CSRF_COOKIE_NAME = 'csrftoken'
+CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
+
+# For debugging CSRF issues
+CSRF_FAILURE_VIEW = 'django.views.csrf.csrf_failure'
