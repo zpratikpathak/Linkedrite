@@ -1,0 +1,99 @@
+version: '3.8'
+
+services:
+  # Web application
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./media:/app/media
+      - ./staticfiles:/app/staticfiles
+    depends_on:
+      - db
+      - redis
+    environment:
+      # Override database settings to use PostgreSQL container
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/linkedrite
+      # Override Redis settings to use Redis container
+      - REDIS_URL=redis://redis:6379/0
+    
+  # PostgreSQL database (optional - comment out if using SQLite)
+  db:
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=linkedrite
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+
+  # Redis cache (optional - comment out if not using Redis)
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+
+# Alternative configurations:
+
+# 1. SQLite only (no database container needed):
+# services:
+#   web:
+#     build: .
+#     ports:
+#       - "8000:8000"
+#     env_file:
+#       - .env
+#     volumes:
+#       - ./db.sqlite3:/app/db.sqlite3
+#       - ./media:/app/media
+#       - ./staticfiles:/app/staticfiles
+
+# 2. External PostgreSQL (e.g., managed database):
+# services:
+#   web:
+#     build: .
+#     ports:
+#       - "8000:8000"
+#     env_file:
+#       - .env
+#     environment:
+#       - DATABASE_URL=postgresql://user:pass@external-host:5432/linkedrite
+#     volumes:
+#       - ./media:/app/media
+#       - ./staticfiles:/app/staticfiles
+
+# 3. MySQL configuration:
+# services:
+#   web:
+#     build: .
+#     ports:
+#       - "8000:8000"
+#     env_file:
+#       - .env
+#     environment:
+#       - DATABASE_URL=mysql://root:rootpass@db:3306/linkedrite
+#     depends_on:
+#       - db
+#   
+#   db:
+#     image: mysql:8.0
+#     volumes:
+#       - mysql_data:/var/lib/mysql
+#     environment:
+#       - MYSQL_DATABASE=linkedrite
+#       - MYSQL_ROOT_PASSWORD=rootpass
+#     ports:
+#       - "3306:3306"

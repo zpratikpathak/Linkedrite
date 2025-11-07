@@ -1,47 +1,43 @@
+{% extends 'base/base.html' %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Linkedrite - AI powered writer</title>
-    <link rel="icon" href="{% static './favicon.ico' %}" />
-    <link rel="stylesheet" href="{% static './rewrite/style.css' %}" />
-    <meta name="description" content="Linkedrite - AI powered writer is your go-to LinkedIn Post Generator. Generate professional, engaging, and AI-optimized LinkedIn posts with ease.">
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-GEBMJ3L39W"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+{% block title %}LinkedRite - AI Powered LinkedIn Writer{% endblock %}
 
-      gtag('config', 'G-GEBMJ3L39W');
-    </script>
-    <script type="application/ld+json">
-      {
-        "@context": "http://schema.org",
-        "@type": "SoftwareApplication",
-        "name": "Linkedrite - LinkedIn AI Powered Writer",
-        "applicationCategory": "WebApplication",
-        "operatingSystem": "All",
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "USD"
-        },
-        "description": "Easily generate engaging, SEO-friendly posts for Linkding with our online tool. Create content in seconds and boost your productivity.",
-        "features": "Generate posts quickly; Time Saving; Easy to use interface",
-        "aggregateRating": {
-          "@type": "AggregateRating",
-          "ratingValue": "4.5",
-          "reviewCount": "24"
-        },
-        "url": "https://linkedrite.pratikpathak.com/"
-      }
-      </script>
-  </head>
-  <body>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static './rewrite/style.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Usage Counter for Authenticated Users -->
+    {% if user.is_authenticated %}
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="alert alert-info d-flex justify-content-between align-items-center">
+                <div>
+                    {% if daily_limit %}
+                        <strong>Daily Usage:</strong> {{ current_usage }}/{{ daily_limit }} rewrites used today
+                        {% if not can_use %}
+                            <span class="text-danger ms-2">(Limit reached - <a href="{% url 'rewrite:pricing' %}">Upgrade to Premium</a>)</span>
+                        {% endif %}
+                    {% else %}
+                        <strong>Premium Plan:</strong> Unlimited rewrites available
+                    {% endif %}
+                </div>
+                <a href="{% url 'rewrite:dashboard' %}" class="btn btn-sm btn-primary">View Dashboard</a>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="alert alert-warning">
+                <strong>Welcome!</strong> Please <a href="{% url 'accounts:login' %}">login</a> or <a href="{% url 'accounts:signup' %}">sign up</a> to start rewriting your LinkedIn posts with AI.
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
     <div class="post-box">
       <div class="header">
         <img
@@ -88,8 +84,16 @@
                 ></path>
               </svg>
             </button>
-            <button id="rewrite-btn" class="rewrite-btn" type="submit">
-              <span id="button-text">Rewrite with AI✨</span>
+            <button id="rewrite-btn" class="rewrite-btn" type="submit" {% if not user.is_authenticated or not can_use %}disabled{% endif %}>
+              <span id="button-text">
+                {% if not user.is_authenticated %}
+                  Login to Rewrite
+                {% elif not can_use %}
+                  Daily Limit Reached
+                {% else %}
+                  Rewrite with AI✨
+                {% endif %}
+              </span>
               <div id="spinner" style="display: none"></div>
             </button>
           </div>
@@ -188,9 +192,11 @@
     
       <!-- Add more sections as necessary -->
     </div>
-  </body>
+</div>
+{% endblock %}
 
-  <script>// Assuming adjustHeight and showToast are defined elsewhere
+{% block extra_js %}
+<script>// Assuming adjustHeight and showToast are defined elsewhere
 
     // Cache DOM elements
     const postInput = document.getElementById("postInput");
@@ -225,6 +231,16 @@
     }
     
     function sendData() {
+      // Check if user is authenticated
+      {% if not user.is_authenticated %}
+        window.location.href = "{% url 'accounts:login' %}?next={{ request.path }}";
+        return;
+      {% elif not can_use %}
+        showToast("You've reached your daily limit. Please upgrade to Premium for unlimited rewrites!");
+        window.location.href = "{% url 'rewrite:pricing' %}";
+        return;
+      {% endif %}
+      
       const emojiNeeded = document.getElementById("emojiNeeded").checked;
       originalInput = postInput.value;
     
@@ -239,7 +255,7 @@
       spinner.style.display = "inline-block";
       buttonText.style.display = "none";
     
-      fetch("{% url 'rewrite' %}", {
+      fetch("{% url 'rewrite:rewrite' %}", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -253,11 +269,32 @@
       })
       .then(data => {
         if (!data || !data.rewriteAI) {
-          showToast("An error occurred");
+          showToast(data.message || "An error occurred");
           return;
         }
+        
+        // Update usage counter if provided
+        if (data.usage) {
+          const usageElement = document.querySelector('.alert-info');
+          if (usageElement && data.usage.limit) {
+            usageElement.innerHTML = `
+              <div>
+                <strong>Daily Usage:</strong> ${data.usage.used}/${data.usage.limit} rewrites used today
+                ${data.usage.used >= data.usage.limit ? '<span class="text-danger ms-2">(Limit reached - <a href="{% url 'rewrite:pricing' %}">Upgrade to Premium</a>)</span>' : ''}
+              </div>
+              <a href="{% url 'rewrite:dashboard' %}" class="btn btn-sm btn-primary">View Dashboard</a>
+            `;
+            
+            // Disable button if limit reached
+            if (data.usage.used >= data.usage.limit) {
+              rewriteBtn.disabled = true;
+              buttonText.textContent = 'Daily Limit Reached';
+            }
+          }
+        }
+        
         writeText(data.rewriteAI, false, () => {
-          rewriteBtn.disabled = false;
+          rewriteBtn.disabled = {% if user.is_authenticated and can_use %}false{% else %}true{% endif %};
           spinner.style.display = "none";
           buttonText.style.display = "inline-block";
         });
@@ -265,7 +302,7 @@
       .catch(error => {
         console.error(error);
         showToast(error.message);
-        rewriteBtn.disabled = false;
+        rewriteBtn.disabled = {% if user.is_authenticated and can_use %}false{% else %}true{% endif %};
         spinner.style.display = "none";
         buttonText.style.display = "inline-block";
       });
@@ -278,4 +315,13 @@
     rewriteBtn.addEventListener("click", sendData);
   </script>
   <script src="{% static './rewrite/script.js'%}"></script>
-</html>
+  
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-GEBMJ3L39W"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-GEBMJ3L39W');
+  </script>
+{% endblock %}

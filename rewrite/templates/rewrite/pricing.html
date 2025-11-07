@@ -1,0 +1,212 @@
+{% extends 'base/modern_base.html' %}
+
+{% block title %}Pricing - LinkedRite{% endblock %}
+
+{% block content %}
+<!-- Pricing Hero -->
+<div class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold text-white mb-4" data-aos="fade-up">
+            Choose Your Perfect Plan
+        </h1>
+        <p class="text-xl text-indigo-100 max-w-3xl mx-auto" data-aos="fade-up" data-aos-delay="100">
+            Start for free and upgrade when you need more. No hidden fees, cancel anytime.
+        </p>
+        
+        <!-- Toggle for Monthly/Annual -->
+        <div class="mt-8 flex items-center justify-center" data-aos="fade-up" data-aos-delay="200">
+            <span class="text-white font-medium">Monthly</span>
+            <div class="mx-3" x-data="{ annual: false }">
+                <button @click="annual = !annual" class="relative inline-flex h-6 w-11 items-center rounded-full bg-white/20 transition-colors" :class="{ 'bg-green-400': annual }">
+                    <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform" :class="{ 'translate-x-6': annual, 'translate-x-1': !annual }"></span>
+                </button>
+            </div>
+            <span class="text-white font-medium">Annual</span>
+            <span class="ml-2 px-2 py-1 bg-green-400 text-green-900 text-xs font-bold rounded-full">SAVE 20%</span>
+        </div>
+    </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 mb-20">
+    <!-- Pricing Cards -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8" data-aos="fade-up" data-aos-delay="300">
+        <!-- Free Plan -->
+        <div class="relative">
+            {% if user_subscription and user_subscription.plan == 'FREE' %}
+            <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
+                <span class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-medium px-4 py-1 rounded-full">CURRENT PLAN</span>
+            </div>
+            {% endif %}
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 h-full flex flex-col {% if user_subscription and user_subscription.plan == 'FREE' %}ring-2 ring-indigo-600{% endif %}">
+                    <h3 class="card-title text-center">Free Plan</h3>
+                    <div class="text-center mb-4">
+                        <h2 class="display-4">$0</h2>
+                        <p class="text-muted">per month</p>
+                    </div>
+                    
+                    <ul class="list-unstyled mb-4">
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> <strong>20 rewrites</strong> per day</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Basic AI rewriting</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Emoji integration</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Hashtag suggestions</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Daily limit resets at midnight (your timezone)</li>
+                        <li class="mb-2"><i class="fas fa-times text-muted"></i> Priority support</li>
+                        <li class="mb-2"><i class="fas fa-times text-muted"></i> Advanced AI features</li>
+                    </ul>
+                    
+                    <div class="mt-auto text-center">
+                        {% if not user.is_authenticated %}
+                            <a href="{% url 'accounts:signup' %}" class="btn btn-outline-primary btn-lg">Get Started</a>
+                        {% elif user_subscription and user_subscription.plan == 'FREE' %}
+                            <button class="btn btn-secondary btn-lg" disabled>Current Plan</button>
+                        {% else %}
+                            <form method="post" action="{% url 'rewrite:upgrade_plan' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="plan" value="FREE">
+                                <button type="submit" class="btn btn-outline-primary btn-lg">Switch to Free</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Premium Plan -->
+        <div class="col-md-5 mb-4">
+            <div class="card h-100 shadow {% if user_subscription and user_subscription.plan == 'PREMIUM' %}border-success{% endif %}">
+                {% if user_subscription and user_subscription.plan == 'PREMIUM' %}
+                <div class="card-header bg-success text-white text-center">
+                    <small>CURRENT PLAN</small>
+                </div>
+                {% else %}
+                <div class="card-header bg-warning text-dark text-center">
+                    <small><i class="fas fa-star"></i> MOST POPULAR</small>
+                </div>
+                {% endif %}
+                <div class="card-body d-flex flex-column">
+                    <h3 class="card-title text-center">Premium Plan</h3>
+                    <div class="text-center mb-4">
+                        <h2 class="display-4">$0</h2>
+                        <p class="text-muted">per month <span class="badge bg-success">Limited Time!</span></p>
+                        <small class="text-muted"><s>Regular price: $19.99/month</s></small>
+                    </div>
+                    
+                    <ul class="list-unstyled mb-4">
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> <strong>Unlimited rewrites</strong></li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Advanced AI rewriting</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Emoji integration</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Hashtag optimization</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> No daily limits</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Priority support</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Advanced AI features</li>
+                        <li class="mb-2"><i class="fas fa-check text-success"></i> Early access to new features</li>
+                    </ul>
+                    
+                    <div class="mt-auto text-center">
+                        {% if not user.is_authenticated %}
+                            <a href="{% url 'accounts:signup' %}" class="btn btn-primary btn-lg">Get Premium</a>
+                        {% elif user_subscription and user_subscription.plan == 'PREMIUM' %}
+                            <button class="btn btn-success btn-lg" disabled>Current Plan</button>
+                        {% else %}
+                            <form method="post" action="{% url 'rewrite:upgrade_plan' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="plan" value="PREMIUM">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-crown"></i> Upgrade to Premium
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- FAQ Section -->
+    <div class="row mt-5">
+        <div class="col-md-10 mx-auto">
+            <h2 class="text-center mb-4">Frequently Asked Questions</h2>
+            
+            <div class="accordion" id="pricingFAQ">
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                            How does the daily limit work?
+                        </button>
+                    </h2>
+                    <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#pricingFAQ">
+                        <div class="accordion-body">
+                            Free plan users get 20 rewrites per day. The counter resets at midnight in your selected timezone. 
+                            Premium users have unlimited rewrites with no daily restrictions.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                            Can I upgrade or downgrade my plan anytime?
+                        </button>
+                    </h2>
+                    <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#pricingFAQ">
+                        <div class="accordion-body">
+                            Yes! You can upgrade to Premium or switch back to Free plan at any time. For now, all plans are free 
+                            during our launch period. Contact support for plan changes.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                            What payment methods do you accept?
+                        </button>
+                    </h2>
+                    <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#pricingFAQ">
+                        <div class="accordion-body">
+                            During our launch period, both Free and Premium plans are available at no cost. When we introduce 
+                            paid plans, we'll accept all major credit cards, debit cards, and PayPal through Stripe.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                            What happens when I reach my daily limit?
+                        </button>
+                    </h2>
+                    <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#pricingFAQ">
+                        <div class="accordion-body">
+                            When you reach your daily limit on the Free plan, you'll see an upgrade prompt. You can either wait 
+                            until midnight (in your timezone) for the limit to reset, or upgrade to Premium for unlimited access.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Contact Section -->
+    <div class="text-center mt-5 mb-5">
+        <p class="lead">Have questions? Need a custom plan?</p>
+        <a href="mailto:support@linkedrite.com" class="btn btn-outline-primary">
+            <i class="fas fa-envelope"></i> Contact Support
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .card {
+        transition: transform 0.2s;
+    }
+    .card:hover {
+        transform: translateY(-10px);
+    }
+    .display-4 {
+        font-weight: bold;
+    }
+</style>
+{% endblock %}

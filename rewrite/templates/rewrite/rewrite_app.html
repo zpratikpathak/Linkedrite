@@ -1,0 +1,497 @@
+{% extends 'base/modern_base.html' %}
+{% load static %}
+
+{% block title %}Rewrite - LinkedRite{% endblock %}
+
+{% block extra_css %}
+<style>
+    .typing-indicator span {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #6366f1;
+        margin: 0 2px;
+        animation: typing 1.4s infinite;
+    }
+    .typing-indicator span:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+    .typing-indicator span:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+    @keyframes typing {
+        0%, 60%, 100% {
+            transform: translateY(0);
+            opacity: 0.7;
+        }
+        30% {
+            transform: translateY(-10px);
+            opacity: 1;
+        }
+    }
+    
+    /* Typing cursor */
+    .typing-cursor {
+        display: inline-block;
+        font-weight: normal;
+        color: #6366f1;
+        animation: blink 1s infinite;
+    }
+    
+    @keyframes blink {
+        0%, 49% {
+            opacity: 1;
+        }
+        50%, 100% {
+            opacity: 0;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 pt-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header with Usage Stats -->
+        <div class="mb-8">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold">
+                        <span class="gradient-text">Rewrite Your LinkedIn Post</span>
+                    </h1>
+                    <p class="text-gray-600 dark:text-gray-300 mt-2">
+                        Transform your content into engaging, professional posts
+                    </p>
+                </div>
+                
+                <!-- Usage Counter -->
+                <div class="mt-4 lg:mt-0 bg-white dark:bg-gray-800 rounded-xl px-6 py-4 shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center space-x-4">
+                        <div class="text-center">
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Today's Usage</p>
+                            <p class="text-2xl font-bold">
+                                <span class="gradient-text">{{ current_usage }}</span>
+                                {% if daily_limit %}
+                                <span class="text-gray-400">/{{ daily_limit }}</span>
+                                {% else %}
+                                <span class="text-green-500 text-sm">∞</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        
+                        {% if daily_limit %}
+                        <div class="w-32">
+                            <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                                <div class="h-full bg-gradient-to-r from-indigo-600 to-purple-600 transition-all duration-500"
+                                     style="width: {% widthratio current_usage daily_limit 100 %}%"></div>
+                            </div>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                {% if not can_use %}Limit reached{% else %}{{ daily_limit|add:"-current_usage" }} left{% endif %}
+                            </p>
+                        </div>
+                        {% endif %}
+                        
+                        {% if subscription.plan == 'FREE' %}
+                        <a href="{% url 'rewrite:pricing' %}" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300">
+                            Upgrade →
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Rewrite Interface -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Input Section -->
+            <div class="space-y-4">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+                    <div class="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+                        <h2 class="text-lg font-semibold flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                            </svg>
+                            Original Post
+                        </h2>
+                    </div>
+                    <div class="p-6">
+                        <textarea 
+                            id="postInput"
+                            class="w-full h-64 p-4 text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none transition-all duration-200"
+                            placeholder="Paste or write your LinkedIn post here..."
+                            {% if not can_use %}disabled{% endif %}
+                        ></textarea>
+                        
+                        <div class="mt-4 flex items-center justify-between">
+                            <div class="flex items-center space-x-4">
+                                <div class="flex items-center" x-data="{ emojiEnabled: true }">
+                                    <input type="checkbox" id="emojiNeeded" x-model="emojiEnabled" class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500" checked>
+                                    <label for="emojiNeeded" class="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                                        Add Emojis 😊
+                                    </label>
+                                </div>
+                                
+                                <div class="text-sm text-gray-500 dark:text-gray-400">
+                                    <span id="charCount">0</span> characters
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <button 
+                        id="rewrite-btn"
+                        class="flex-1 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                        {% if not can_use %}disabled{% endif %}
+                    >
+                        <span id="button-text" class="flex items-center justify-center">
+                            {% if not can_use %}
+                                Daily Limit Reached
+                            {% else %}
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                                Rewrite with AI
+                            {% endif %}
+                        </span>
+                        <div id="spinner" class="hidden">
+                            <div class="typing-indicator">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                        </div>
+                    </button>
+                    
+                    <button 
+                        id="clear-btn"
+                        class="px-6 py-3 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-xl font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200"
+                    >
+                        Clear
+                    </button>
+                </div>
+                
+                {% if not can_use %}
+                <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
+                    <p class="text-sm text-amber-800 dark:text-amber-200">
+                        You've reached your daily limit. 
+                        <a href="{% url 'rewrite:pricing' %}" class="font-semibold underline">Upgrade to Premium</a> 
+                        for unlimited rewrites!
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Output Section -->
+            <div class="space-y-4">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+                    <div class="border-b border-gray-200 dark:border-gray-700 px-6 py-4 flex justify-between items-center">
+                        <h2 class="text-lg font-semibold flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            AI Rewritten Post
+                        </h2>
+                        
+                        <div class="flex items-center space-x-2">
+                            <button 
+                                id="undo-btn"
+                                class="p-2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors hidden"
+                                title="Undo"
+                                style="display: none;"
+                            >
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path>
+                                </svg>
+                            </button>
+                            
+                            <button 
+                                id="copy-btn"
+                                class="p-2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors hidden"
+                                title="Copy to clipboard"
+                                style="display: none;"
+                            >
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div id="output-container" class="min-h-[256px] flex items-center justify-center">
+                            <div class="text-center text-gray-400 dark:text-gray-500">
+                                <svg class="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                <p>Your rewritten post will appear here</p>
+                                <p class="text-sm mt-2">Start by writing or pasting your content above</p>
+                            </div>
+                        </div>
+                        
+                        <div id="output-text" class="hidden w-full min-h-[256px] p-4 text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-gray-900 rounded-lg whitespace-pre-wrap"></div>
+                    </div>
+                </div>
+                
+                <!-- Tips -->
+                <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4">
+                    <h3 class="font-semibold text-blue-900 dark:text-blue-200 mb-2 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Pro Tips
+                    </h3>
+                    <ul class="text-sm text-blue-800 dark:text-blue-300 space-y-1">
+                        <li>• Keep your original post concise and focused</li>
+                        <li>• The AI will enhance grammar, tone, and engagement</li>
+                        <li>• Review and personalize the AI output before posting</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Notification -->
+<div id="toast" class="fixed bottom-4 right-4 transform translate-y-full transition-transform duration-300 z-50">
+    <div class="bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span id="toast-message">Copied to clipboard!</span>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Cache DOM elements
+const postInput = document.getElementById("postInput");
+const rewriteBtn = document.getElementById("rewrite-btn");
+const spinner = document.getElementById("spinner");
+const buttonText = document.getElementById("button-text");
+const undoBtn = document.getElementById("undo-btn");
+const copyBtn = document.getElementById("copy-btn");
+const clearBtn = document.getElementById("clear-btn");
+const charCount = document.getElementById("charCount");
+const outputContainer = document.getElementById("output-container");
+const outputText = document.getElementById("output-text");
+const toast = document.getElementById("toast");
+const toastMessage = document.getElementById("toast-message");
+
+let originalInput = "";
+let rewrittenText = "";
+
+// Character counter
+postInput.addEventListener('input', () => {
+    charCount.textContent = postInput.value.length;
+});
+
+// Show toast notification
+function showToast(message, type = 'success') {
+    toastMessage.textContent = message;
+    toast.classList.remove('translate-y-full');
+    if (type === 'error') {
+        toast.querySelector('div').classList.remove('bg-green-500');
+        toast.querySelector('div').classList.add('bg-red-500');
+    } else {
+        toast.querySelector('div').classList.remove('bg-red-500');
+        toast.querySelector('div').classList.add('bg-green-500');
+    }
+    setTimeout(() => {
+        toast.classList.add('translate-y-full');
+    }, 3000);
+}
+
+// Typing animation
+function typeText(text, element, callback) {
+    let index = 0;
+    let currentText = '';
+    const typingSpeed = 15; // milliseconds per character
+    
+    // Create a cursor element
+    const cursor = document.createElement('span');
+    cursor.className = 'typing-cursor';
+    cursor.textContent = '|';
+    cursor.style.animation = 'blink 1s infinite';
+    element.appendChild(cursor);
+    
+    function type() {
+        if (index < text.length) {
+            // Handle newlines properly
+            if (text[index] === '\n') {
+                currentText += '\n';
+            } else {
+                currentText += text[index];
+            }
+            
+            element.textContent = currentText;
+            element.appendChild(cursor);
+            index++;
+            
+            // Variable speed for more natural typing
+            const delay = text[index - 1] === '.' || text[index - 1] === '!' || text[index - 1] === '?' 
+                ? typingSpeed * 3 
+                : text[index - 1] === ',' 
+                ? typingSpeed * 2 
+                : typingSpeed;
+                
+            setTimeout(type, delay);
+        } else {
+            // Remove cursor and call callback when done
+            cursor.remove();
+            if (callback) callback();
+        }
+    }
+    
+    type();
+}
+
+// Clear button
+clearBtn.addEventListener('click', () => {
+    postInput.value = '';
+    charCount.textContent = '0';
+    outputContainer.classList.remove('hidden');
+    outputText.classList.add('hidden');
+    outputText.textContent = '';
+    undoBtn.classList.add('hidden');
+    copyBtn.classList.add('hidden');
+    undoBtn.style.display = 'none';
+    copyBtn.style.display = 'none';
+});
+
+// Copy button
+copyBtn.addEventListener('click', () => {
+    navigator.clipboard.writeText(rewrittenText).then(() => {
+        showToast('Copied to clipboard!');
+    }).catch(() => {
+        showToast('Failed to copy', 'error');
+    });
+});
+
+// Undo button
+undoBtn.addEventListener('click', () => {
+    postInput.value = originalInput;
+    charCount.textContent = originalInput.length;
+});
+
+// Rewrite function
+async function rewritePost() {
+    const text = postInput.value.trim();
+    
+    if (text.length < 10) {
+        showToast('Please write at least 10 characters', 'error');
+        return;
+    }
+    
+    originalInput = text;
+    const emojiNeeded = document.getElementById('emojiNeeded').checked;
+    
+    // UI updates
+    rewriteBtn.disabled = true;
+    buttonText.classList.add('hidden');
+    spinner.classList.remove('hidden');
+    
+    try {
+        const response = await fetch("{% url 'rewrite:rewrite' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                postInput: text,
+                emojiNeeded: emojiNeeded,
+                htagNeeded: true
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.message || 'An error occurred');
+        }
+        
+        if (data.success && data.rewriteAI) {
+            rewrittenText = data.rewriteAI;
+            
+            // Show output area
+            outputContainer.classList.add('hidden');
+            outputText.classList.remove('hidden');
+            outputText.textContent = ''; // Clear previous content
+            
+            // Typing animation
+            typeText(rewrittenText, outputText, () => {
+                // Show action buttons after typing is complete
+                undoBtn.style.display = 'block';
+                copyBtn.style.display = 'block';
+                undoBtn.classList.remove('hidden');
+                copyBtn.classList.remove('hidden');
+            });
+            
+            // Update usage counter if provided
+            if (data.usage) {
+                updateUsageDisplay(data.usage);
+            }
+        } else {
+            throw new Error(data.message || 'Failed to rewrite post');
+        }
+    } catch (error) {
+        showToast(error.message, 'error');
+    } finally {
+        rewriteBtn.disabled = {% if can_use %}false{% else %}true{% endif %};
+        buttonText.classList.remove('hidden');
+        spinner.classList.add('hidden');
+    }
+}
+
+// Update usage display
+function updateUsageDisplay(usage) {
+    const usageElement = document.querySelector('.text-2xl.font-bold');
+    if (usageElement && usage.limit) {
+        usageElement.innerHTML = `
+            <span class="gradient-text">${usage.used}</span>
+            <span class="text-gray-400">/${usage.limit}</span>
+        `;
+        
+        // Update progress bar
+        const progressBar = document.querySelector('.h-2 .h-full');
+        if (progressBar) {
+            progressBar.style.width = `${(usage.used / usage.limit) * 100}%`;
+        }
+        
+        // Disable button if limit reached
+        if (usage.used >= usage.limit) {
+            rewriteBtn.disabled = true;
+            buttonText.innerHTML = 'Daily Limit Reached';
+        }
+    }
+}
+
+// Get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Event listeners
+rewriteBtn.addEventListener('click', rewritePost);
+postInput.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.key === 'Enter' && !rewriteBtn.disabled) {
+        rewritePost();
+    }
+});
+</script>
+{% endblock %}

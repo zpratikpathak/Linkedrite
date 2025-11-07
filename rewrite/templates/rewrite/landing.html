@@ -1,0 +1,353 @@
+{% extends 'base/modern_base.html' %}
+{% load static %}
+
+{% block title %}LinkedRite - Transform Your LinkedIn Posts with AI{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <!-- Animated Background -->
+    <div class="absolute inset-0 gradient-mesh opacity-30 animate-gradient"></div>
+    
+    <!-- Floating shapes -->
+    <div class="absolute inset-0 overflow-hidden">
+        <div class="absolute -top-40 -right-40 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float"></div>
+        <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-indigo-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float" style="animation-delay: 2s;"></div>
+        <div class="absolute top-40 left-1/2 w-80 h-80 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float" style="animation-delay: 4s;"></div>
+    </div>
+    
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div data-aos="fade-up">
+            <span class="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200 mb-4">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+                AI-Powered LinkedIn Writer
+            </span>
+            
+            <h1 class="text-5xl md:text-7xl font-bold mb-6">
+                <span class="block">Transform Your</span>
+                <span class="block gradient-text">LinkedIn Presence</span>
+            </h1>
+            
+            <p class="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
+                Create engaging, professional LinkedIn posts in seconds with our AI-powered rewriter. 
+                Boost your engagement and grow your professional network effortlessly.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+                {% if user.is_authenticated %}
+                <a href="{% url 'rewrite:dashboard' %}" class="px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold text-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 shadow-lg">
+                    Go to Dashboard
+                    <svg class="inline-block w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                    </svg>
+                </a>
+                {% else %}
+                <a href="{% url 'accounts:signup' %}" class="px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold text-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 shadow-lg">
+                    Start Writing for Free
+                    <svg class="inline-block w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                    </svg>
+                </a>
+                <a href="#demo" class="px-8 py-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-xl font-semibold text-lg border-2 border-gray-200 dark:border-gray-700 hover:border-indigo-600 dark:hover:border-indigo-400 transition-all duration-200">
+                    See Demo
+                    <svg class="inline-block w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </a>
+                {% endif %}
+            </div>
+            
+            <!-- Stats -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-3xl mx-auto" data-aos="fade-up" data-aos-delay="200">
+                <div>
+                    <div class="text-4xl font-bold gradient-text mb-2" x-data="{ count: 0 }" x-init="
+                        let target = 50000;
+                        let increment = target / 100;
+                        let interval = setInterval(() => {
+                            count = Math.min(count + increment, target);
+                            if (count >= target) clearInterval(interval);
+                        }, 20);
+                    " x-text="Math.floor(count).toLocaleString() + '+'"></div>
+                    <p class="text-gray-600 dark:text-gray-400">Posts Rewritten</p>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold gradient-text mb-2" x-data="{ count: 0 }" x-init="
+                        let target = 95;
+                        let interval = setInterval(() => {
+                            count = Math.min(count + 1, target);
+                            if (count >= target) clearInterval(interval);
+                        }, 20);
+                    " x-text="count + '%'"></div>
+                    <p class="text-gray-600 dark:text-gray-400">User Satisfaction</p>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold gradient-text mb-2" x-data="{ count: 0 }" x-init="
+                        let target = 3;
+                        setTimeout(() => count = target, 500);
+                    " x-text="count + 'x'"></div>
+                    <p class="text-gray-600 dark:text-gray-400">Average Engagement Boost</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scroll indicator -->
+    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+        </svg>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="py-20 bg-white dark:bg-gray-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16" data-aos="fade-up">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                Why Choose <span class="gradient-text">LinkedRite?</span>
+            </h2>
+            <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+                Our AI-powered platform helps you create compelling LinkedIn content that drives engagement and builds your professional brand.
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Feature 1 -->
+            <div class="bg-gray-50 dark:bg-gray-800 rounded-2xl p-8 hover:shadow-xl transition-shadow duration-300" data-aos="fade-up" data-aos-delay="100">
+                <div class="w-14 h-14 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-semibold mb-3">Lightning Fast</h3>
+                <p class="text-gray-600 dark:text-gray-300">
+                    Generate professional LinkedIn posts in seconds, not hours. Our AI understands context and tone perfectly.
+                </p>
+            </div>
+            
+            <!-- Feature 2 -->
+            <div class="bg-gray-50 dark:bg-gray-800 rounded-2xl p-8 hover:shadow-xl transition-shadow duration-300" data-aos="fade-up" data-aos-delay="200">
+                <div class="w-14 h-14 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-semibold mb-3">Grammar Perfect</h3>
+                <p class="text-gray-600 dark:text-gray-300">
+                    Say goodbye to typos and grammatical errors. Our AI ensures your posts are polished and professional.
+                </p>
+            </div>
+            
+            <!-- Feature 3 -->
+            <div class="bg-gray-50 dark:bg-gray-800 rounded-2xl p-8 hover:shadow-xl transition-shadow duration-300" data-aos="fade-up" data-aos-delay="300">
+                <div class="w-14 h-14 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11"></path>
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-semibold mb-3">Engagement Optimized</h3>
+                <p class="text-gray-600 dark:text-gray-300">
+                    Our AI is trained on high-performing LinkedIn content to maximize your post engagement and reach.
+                </p>
+            </div>
+            
+            <!-- Feature 4 -->
+            <div class="bg-gray-50 dark:bg-gray-800 rounded-2xl p-8 hover:shadow-xl transition-shadow duration-300" data-aos="fade-up" data-aos-delay="400">
+                <div class="w-14 h-14 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-semibold mb-3">Emoji Intelligence</h3>
+                <p class="text-gray-600 dark:text-gray-300">
+                    Add the perfect emojis to make your posts more engaging and expressive with just one click.
+                </p>
+            </div>
+            
+            <!-- Feature 5 -->
+            <div class="bg-gray-50 dark:bg-gray-800 rounded-2xl p-8 hover:shadow-xl transition-shadow duration-300" data-aos="fade-up" data-aos-delay="500">
+                <div class="w-14 h-14 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path>
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-semibold mb-3">Smart Hashtags</h3>
+                <p class="text-gray-600 dark:text-gray-300">
+                    Automatically generate relevant hashtags to increase your post visibility and reach the right audience.
+                </p>
+            </div>
+            
+            <!-- Feature 6 -->
+            <div class="bg-gray-50 dark:bg-gray-800 rounded-2xl p-8 hover:shadow-xl transition-shadow duration-300" data-aos="fade-up" data-aos-delay="600">
+                <div class="w-14 h-14 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-semibold mb-3">Time Saver</h3>
+                <p class="text-gray-600 dark:text-gray-300">
+                    Save hours of writing and editing time. Focus on networking while we handle the content creation.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Demo Section -->
+<section id="demo" class="py-20 bg-gray-50 dark:bg-gray-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16" data-aos="fade-up">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                See LinkedRite in <span class="gradient-text">Action</span>
+            </h2>
+            <p class="text-xl text-gray-600 dark:text-gray-300">
+                Watch how easy it is to transform your LinkedIn posts
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <!-- Before -->
+            <div class="relative" data-aos="fade-right">
+                <div class="absolute -top-4 -left-4 bg-red-500 text-white px-4 py-1 rounded-full text-sm font-medium">Before</div>
+                <div class="bg-white dark:bg-gray-900 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+                    <p class="text-gray-600 dark:text-gray-300 leading-relaxed">
+                        just finished a great project with my team. we worked really hard and learned alot. it was challenging but we made it work. thanks to everyone who helped. looking forward to the next project. #teamwork #success
+                    </p>
+                </div>
+            </div>
+            
+            <!-- After -->
+            <div class="relative" data-aos="fade-left">
+                <div class="absolute -top-4 -left-4 bg-green-500 text-white px-4 py-1 rounded-full text-sm font-medium">After</div>
+                <div class="bg-white dark:bg-gray-900 rounded-xl p-6 shadow-lg border-2 border-green-500">
+                    <p class="text-gray-700 dark:text-gray-200 leading-relaxed">
+                        🎉 Thrilled to announce the successful completion of our latest project! 
+                        <br><br>
+                        Our incredible team demonstrated exceptional dedication and resilience throughout this challenging journey. The collaborative effort and innovative problem-solving truly made the difference.
+                        <br><br>
+                        Key takeaways:
+                        ✅ Strong teamwork drives results
+                        ✅ Challenges become opportunities for growth
+                        ✅ Every team member's contribution matters
+                        <br><br>
+                        Grateful for the amazing colleagues who made this achievement possible. Excited for what's next! 🚀
+                        <br><br>
+                        #TeamSuccess #ProjectManagement #Leadership #Innovation #GrowthMindset
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-12" data-aos="fade-up">
+            <a href="{% url 'accounts:signup' %}" class="px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold text-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 shadow-lg">
+                Try It Yourself - It's Free!
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section class="py-20 bg-white dark:bg-gray-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16" data-aos="fade-up">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                What Our Users <span class="gradient-text">Say</span>
+            </h2>
+            <p class="text-xl text-gray-600 dark:text-gray-300">
+                Join thousands of professionals who've transformed their LinkedIn presence
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Testimonial 1 -->
+            <div class="bg-gray-50 dark:bg-gray-800 rounded-2xl p-8" data-aos="fade-up" data-aos-delay="100">
+                <div class="flex items-center mb-4">
+                    <div class="text-yellow-400 flex">
+                        ⭐⭐⭐⭐⭐
+                    </div>
+                </div>
+                <p class="text-gray-600 dark:text-gray-300 mb-6 italic">
+                    "LinkedRite has completely transformed how I approach LinkedIn. My engagement has increased by 300% and I save hours every week!"
+                </p>
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold mr-3">
+                        SK
+                    </div>
+                    <div>
+                        <p class="font-semibold">Sarah Kim</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Marketing Director</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Testimonial 2 -->
+            <div class="bg-gray-50 dark:bg-gray-800 rounded-2xl p-8" data-aos="fade-up" data-aos-delay="200">
+                <div class="flex items-center mb-4">
+                    <div class="text-yellow-400 flex">
+                        ⭐⭐⭐⭐⭐
+                    </div>
+                </div>
+                <p class="text-gray-600 dark:text-gray-300 mb-6 italic">
+                    "The AI suggestions are spot-on. It understands professional tone perfectly and the hashtag recommendations are always relevant."
+                </p>
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold mr-3">
+                        JD
+                    </div>
+                    <div>
+                        <p class="font-semibold">James Davis</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Sales Executive</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Testimonial 3 -->
+            <div class="bg-gray-50 dark:bg-gray-800 rounded-2xl p-8" data-aos="fade-up" data-aos-delay="300">
+                <div class="flex items-center mb-4">
+                    <div class="text-yellow-400 flex">
+                        ⭐⭐⭐⭐⭐
+                    </div>
+                </div>
+                <p class="text-gray-600 dark:text-gray-300 mb-6 italic">
+                    "As a non-native English speaker, LinkedRite is a game-changer. It helps me communicate professionally and confidently."
+                </p>
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold mr-3">
+                        MC
+                    </div>
+                    <div>
+                        <p class="font-semibold">Maria Chen</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Tech Entrepreneur</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-20 bg-gradient-to-r from-indigo-600 to-purple-600">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center" data-aos="fade-up">
+        <h2 class="text-4xl md:text-5xl font-bold text-white mb-4">
+            Ready to Transform Your LinkedIn?
+        </h2>
+        <p class="text-xl text-indigo-100 mb-8">
+            Join thousands of professionals creating better content in less time.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{% url 'accounts:signup' %}" class="px-8 py-4 bg-white text-indigo-600 rounded-xl font-semibold text-lg hover:bg-gray-100 transition-all duration-200 transform hover:scale-105 shadow-lg">
+                Start Free Trial
+            </a>
+            <a href="{% url 'rewrite:pricing' %}" class="px-8 py-4 bg-transparent text-white border-2 border-white rounded-xl font-semibold text-lg hover:bg-white hover:text-indigo-600 transition-all duration-200">
+                View Pricing
+            </a>
+        </div>
+        <p class="mt-6 text-indigo-100">
+            No credit card required • 20 free rewrites daily
+        </p>
+    </div>
+</section>
+{% endblock %}

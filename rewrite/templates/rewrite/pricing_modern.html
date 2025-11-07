@@ -1,0 +1,461 @@
+{% extends 'base/modern_base.html' %}
+
+{% block title %}Pricing - LinkedRite{% endblock %}
+
+{% block content %}
+<!-- Pricing Hero -->
+<div class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold text-white mb-4" data-aos="fade-up">
+            Simple, Transparent Pricing
+        </h1>
+        <p class="text-xl text-indigo-100 max-w-3xl mx-auto" data-aos="fade-up" data-aos-delay="100">
+            Start for free and upgrade when you need more. No hidden fees, cancel anytime.
+        </p>
+        
+        <!-- Limited Time Badge -->
+        <div class="mt-8" data-aos="fade-up" data-aos-delay="200">
+            <span class="inline-flex items-center px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-white font-medium">
+                <svg class="w-5 h-5 mr-2 text-yellow-300" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                </svg>
+                LIMITED TIME: All plans FREE during launch!
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 mb-20">
+    <!-- Pricing Cards -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8" data-aos="fade-up" data-aos-delay="300">
+        
+        <!-- Free Plan -->
+        <div class="relative transform hover:scale-105 transition-transform duration-300">
+            {% if user_subscription and user_subscription.plan == 'FREE' %}
+            <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
+                <span class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-medium px-4 py-1 rounded-full">CURRENT PLAN</span>
+            </div>
+            {% endif %}
+            
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 h-full flex flex-col {% if user_subscription and user_subscription.plan == 'FREE' %}ring-2 ring-indigo-600{% endif %}">
+                <div class="text-center mb-8">
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Free</h3>
+                    <p class="text-gray-500 dark:text-gray-400">Perfect for getting started</p>
+                    <div class="mt-4">
+                        <span class="text-5xl font-bold gradient-text">$0</span>
+                        <span class="text-gray-500 dark:text-gray-400">/month</span>
+                    </div>
+                </div>
+                
+                <ul class="space-y-4 mb-8 flex-1">
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span class="text-gray-700 dark:text-gray-300"><strong>20 rewrites</strong> per day</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span class="text-gray-700 dark:text-gray-300">AI-powered rewriting</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span class="text-gray-700 dark:text-gray-300">Emoji & hashtag support</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span class="text-gray-700 dark:text-gray-300">Basic analytics</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-gray-300 dark:text-gray-600 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        <span class="text-gray-400 dark:text-gray-500">Priority support</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-gray-300 dark:text-gray-600 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        <span class="text-gray-400 dark:text-gray-500">Advanced AI features</span>
+                    </li>
+                </ul>
+                
+                <div class="mt-auto">
+                    {% if not user.is_authenticated %}
+                    <a href="{% url 'accounts:signup' %}" class="w-full block text-center py-3 px-4 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-2 border-gray-300 dark:border-gray-600 rounded-xl font-semibold hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-200">
+                        Get Started
+                    </a>
+                    {% elif user_subscription and user_subscription.plan == 'FREE' %}
+                    <button class="w-full py-3 px-4 bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 rounded-xl font-semibold cursor-not-allowed" disabled>
+                        Current Plan
+                    </button>
+                    {% else %}
+                    <form method="post" action="{% url 'rewrite:upgrade_plan' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="plan" value="FREE">
+                        <button type="submit" class="w-full py-3 px-4 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-2 border-gray-300 dark:border-gray-600 rounded-xl font-semibold hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-200">
+                            Switch to Free
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Premium Plan (Most Popular) -->
+        <div class="relative transform hover:scale-105 transition-transform duration-300 lg:scale-110">
+            {% if user_subscription and user_subscription.plan == 'PREMIUM' %}
+            <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
+                <span class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-medium px-4 py-1 rounded-full">CURRENT PLAN</span>
+            </div>
+            {% else %}
+            <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
+                <span class="bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-sm font-medium px-4 py-1 rounded-full">MOST POPULAR</span>
+            </div>
+            {% endif %}
+            
+            <div class="bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl shadow-2xl p-8 h-full flex flex-col text-white relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-20 -mt-20"></div>
+                <div class="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full -ml-16 -mb-16"></div>
+                
+                <div class="relative text-center mb-8">
+                    <h3 class="text-2xl font-bold mb-2">Premium</h3>
+                    <p class="text-indigo-100">For serious professionals</p>
+                    <div class="mt-4">
+                        <span class="text-5xl font-bold">$0</span>
+                        <span class="text-indigo-100">/month</span>
+                        <p class="text-sm text-indigo-200 line-through mt-1">Regular: $19.99</p>
+                    </div>
+                </div>
+                
+                <ul class="space-y-4 mb-8 flex-1 relative">
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-400 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span><strong>Unlimited rewrites</strong></span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-400 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span>Advanced AI features</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-400 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span>Priority support</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-400 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span>Advanced analytics</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-400 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span>Custom AI training</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-400 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span>Early access to features</span>
+                    </li>
+                </ul>
+                
+                <div class="mt-auto relative">
+                    {% if not user.is_authenticated %}
+                    <a href="{% url 'accounts:signup' %}" class="w-full block text-center py-3 px-4 bg-white text-indigo-600 rounded-xl font-semibold hover:bg-gray-100 transition-all duration-200 transform hover:scale-105">
+                        Get Premium Free
+                    </a>
+                    {% elif user_subscription and user_subscription.plan == 'PREMIUM' %}
+                    <button class="w-full py-3 px-4 bg-white/20 text-white rounded-xl font-semibold cursor-not-allowed" disabled>
+                        Current Plan
+                    </button>
+                    {% else %}
+                    <form method="post" action="{% url 'rewrite:upgrade_plan' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="plan" value="PREMIUM">
+                        <button type="submit" class="w-full py-3 px-4 bg-white text-indigo-600 rounded-xl font-semibold hover:bg-gray-100 transition-all duration-200 transform hover:scale-105">
+                            Upgrade to Premium
+                        </button>
+                    </form>
+                    {% endif %}
+                    
+                    <p class="text-xs text-center mt-3 text-indigo-100">No credit card required</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Enterprise Plan -->
+        <div class="relative transform hover:scale-105 transition-transform duration-300">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 h-full flex flex-col">
+                <div class="text-center mb-8">
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Enterprise</h3>
+                    <p class="text-gray-500 dark:text-gray-400">For teams and organizations</p>
+                    <div class="mt-4">
+                        <span class="text-5xl font-bold gradient-text">Custom</span>
+                    </div>
+                </div>
+                
+                <ul class="space-y-4 mb-8 flex-1">
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span class="text-gray-700 dark:text-gray-300">Everything in Premium</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span class="text-gray-700 dark:text-gray-300">Team collaboration</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span class="text-gray-700 dark:text-gray-300">SSO & advanced security</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span class="text-gray-700 dark:text-gray-300">API access</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span class="text-gray-700 dark:text-gray-300">Dedicated support</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span class="text-gray-700 dark:text-gray-300">SLA guarantee</span>
+                    </li>
+                </ul>
+                
+                <div class="mt-auto">
+                    <a href="mailto:enterprise@linkedrite.com" class="w-full block text-center py-3 px-4 bg-gray-900 dark:bg-gray-700 text-white rounded-xl font-semibold hover:bg-gray-800 dark:hover:bg-gray-600 transition-all duration-200">
+                        Contact Sales
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Feature Comparison -->
+    <div class="mt-20" data-aos="fade-up">
+        <h2 class="text-3xl font-bold text-center text-gray-900 dark:text-white mb-12">
+            Compare Plans
+        </h2>
+        
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                    <tr>
+                        <th class="text-left py-4 px-6 text-gray-600 dark:text-gray-400 font-medium">Features</th>
+                        <th class="text-center py-4 px-6 text-gray-900 dark:text-white font-bold">Free</th>
+                        <th class="text-center py-4 px-6 text-gray-900 dark:text-white font-bold">Premium</th>
+                        <th class="text-center py-4 px-6 text-gray-900 dark:text-white font-bold">Enterprise</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                    <tr>
+                        <td class="py-4 px-6 text-gray-700 dark:text-gray-300">Daily Rewrites</td>
+                        <td class="text-center py-4 px-6">20</td>
+                        <td class="text-center py-4 px-6 text-green-600 dark:text-green-400 font-semibold">Unlimited</td>
+                        <td class="text-center py-4 px-6 text-green-600 dark:text-green-400 font-semibold">Unlimited</td>
+                    </tr>
+                    <tr>
+                        <td class="py-4 px-6 text-gray-700 dark:text-gray-300">AI Quality</td>
+                        <td class="text-center py-4 px-6">Standard</td>
+                        <td class="text-center py-4 px-6">Advanced</td>
+                        <td class="text-center py-4 px-6">Custom</td>
+                    </tr>
+                    <tr>
+                        <td class="py-4 px-6 text-gray-700 dark:text-gray-300">Support</td>
+                        <td class="text-center py-4 px-6">Email</td>
+                        <td class="text-center py-4 px-6">Priority</td>
+                        <td class="text-center py-4 px-6">Dedicated</td>
+                    </tr>
+                    <tr>
+                        <td class="py-4 px-6 text-gray-700 dark:text-gray-300">Analytics</td>
+                        <td class="text-center py-4 px-6">
+                            <svg class="w-5 h-5 mx-auto text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </td>
+                        <td class="text-center py-4 px-6">
+                            <svg class="w-5 h-5 mx-auto text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </td>
+                        <td class="text-center py-4 px-6">
+                            <svg class="w-5 h-5 mx-auto text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="py-4 px-6 text-gray-700 dark:text-gray-300">API Access</td>
+                        <td class="text-center py-4 px-6">
+                            <svg class="w-5 h-5 mx-auto text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </td>
+                        <td class="text-center py-4 px-6">
+                            <svg class="w-5 h-5 mx-auto text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </td>
+                        <td class="text-center py-4 px-6">
+                            <svg class="w-5 h-5 mx-auto text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="py-4 px-6 text-gray-700 dark:text-gray-300">Team Features</td>
+                        <td class="text-center py-4 px-6">
+                            <svg class="w-5 h-5 mx-auto text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </td>
+                        <td class="text-center py-4 px-6">
+                            <svg class="w-5 h-5 mx-auto text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </td>
+                        <td class="text-center py-4 px-6">
+                            <svg class="w-5 h-5 mx-auto text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- FAQ Section -->
+    <div class="mt-20" data-aos="fade-up">
+        <h2 class="text-3xl font-bold text-center text-gray-900 dark:text-white mb-12">
+            Frequently Asked Questions
+        </h2>
+        
+        <div class="max-w-3xl mx-auto" x-data="{ active: null }">
+            <!-- Question 1 -->
+            <div class="mb-4">
+                <button @click="active = active === 1 ? null : 1" 
+                        class="w-full text-left px-6 py-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 flex items-center justify-between">
+                    <span class="font-medium text-gray-900 dark:text-white">How does the free trial work?</span>
+                    <svg class="w-5 h-5 text-gray-500 transition-transform duration-200" 
+                         :class="{ 'rotate-180': active === 1 }"
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div x-show="active === 1" x-collapse x-cloak>
+                    <div class="px-6 py-4 bg-gray-50 dark:bg-gray-700 rounded-b-xl">
+                        <p class="text-gray-600 dark:text-gray-300">
+                            Currently, all plans including Premium are free during our launch period! You can upgrade to Premium anytime to get unlimited rewrites and advanced features. No credit card required.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Question 2 -->
+            <div class="mb-4">
+                <button @click="active = active === 2 ? null : 2" 
+                        class="w-full text-left px-6 py-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 flex items-center justify-between">
+                    <span class="font-medium text-gray-900 dark:text-white">When do my daily limits reset?</span>
+                    <svg class="w-5 h-5 text-gray-500 transition-transform duration-200" 
+                         :class="{ 'rotate-180': active === 2 }"
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div x-show="active === 2" x-collapse x-cloak>
+                    <div class="px-6 py-4 bg-gray-50 dark:bg-gray-700 rounded-b-xl">
+                        <p class="text-gray-600 dark:text-gray-300">
+                            Daily limits reset at midnight in your selected timezone. You can view and update your timezone in your profile settings. Premium users have unlimited rewrites with no daily limits.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Question 3 -->
+            <div class="mb-4">
+                <button @click="active = active === 3 ? null : 3" 
+                        class="w-full text-left px-6 py-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 flex items-center justify-between">
+                    <span class="font-medium text-gray-900 dark:text-white">Can I cancel anytime?</span>
+                    <svg class="w-5 h-5 text-gray-500 transition-transform duration-200" 
+                         :class="{ 'rotate-180': active === 3 }"
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div x-show="active === 3" x-collapse x-cloak>
+                    <div class="px-6 py-4 bg-gray-50 dark:bg-gray-700 rounded-b-xl">
+                        <p class="text-gray-600 dark:text-gray-300">
+                            Yes! You can upgrade, downgrade, or cancel your plan at any time. There are no long-term contracts or cancellation fees. Your plan changes take effect immediately.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Question 4 -->
+            <div class="mb-4">
+                <button @click="active = active === 4 ? null : 4" 
+                        class="w-full text-left px-6 py-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 flex items-center justify-between">
+                    <span class="font-medium text-gray-900 dark:text-white">What payment methods do you accept?</span>
+                    <svg class="w-5 h-5 text-gray-500 transition-transform duration-200" 
+                         :class="{ 'rotate-180': active === 4 }"
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div x-show="active === 4" x-collapse x-cloak>
+                    <div class="px-6 py-4 bg-gray-50 dark:bg-gray-700 rounded-b-xl">
+                        <p class="text-gray-600 dark:text-gray-300">
+                            When we start charging for plans, we'll accept all major credit cards, debit cards, and PayPal through our secure payment processor, Stripe. For enterprise customers, we also offer invoicing options.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bottom CTA -->
+    <div class="mt-20 text-center" data-aos="fade-up">
+        <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+            Ready to Transform Your LinkedIn Content?
+        </h2>
+        <p class="text-xl text-gray-600 dark:text-gray-300 mb-8">
+            Join thousands of professionals creating better posts in less time.
+        </p>
+        <a href="{% url 'accounts:signup' %}" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 shadow-lg">
+            Start Your Free Trial
+            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+            </svg>
+        </a>
+        <p class="mt-4 text-sm text-gray-500 dark:text-gray-400">
+            No credit card required • Cancel anytime
+        </p>
+    </div>
+</div>
+{% endblock %}

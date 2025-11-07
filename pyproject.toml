@@ -1,7 +1,7 @@
 [project]
 name = "linkedrite"
 version = "0.1.0"
-description = "Add your description here"
+description = "LinkedRite - AI-powered LinkedIn post rewriter SaaS application with user authentication and subscription management"
 readme = "docs/readme.md"
 requires-python = ">=3.13"
 dependencies = [
@@ -12,4 +12,16 @@ dependencies = [
     "openai>=1.76.2",
     "python-dotenv>=1.1.0",
     "whitenoise>=6.9.0",
+    "pytz>=2025.2",
+    "django-crispy-forms>=2.4",
+    "crispy-bootstrap5>=2025.6",
+    "stripe>=13.1.2",
+    "pydantic>=2.12.0",
+    "httpx>=0.28.0",
+    "distro>=1.9.0",
+    "tqdm>=4.67.0",
+    "dj-database-url>=2.3.0",
+    "psycopg2-binary>=2.9.0",
+    "redis>=5.0.0",
+    "django-redis>=5.4.0",
 ]

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Your Email - LinkedRite</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f8f9fa; margin: 0; padding: 0;">
+    <div style="max-width: 600px; margin: 50px auto; background-color: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden;">
+        <div style="background-color: #343a40; color: white; text-align: center; padding: 30px;">
+            <h1 style="margin: 0; font-size: 28px;">LinkedRite</h1>
+            <p style="margin-top: 10px; opacity: 0.9;">AI-Powered LinkedIn Writer</p>
+        </div>
+        
+        <div style="padding: 40px;">
+            <h2 style="color: #343a40; margin-bottom: 20px;">Hi {{ user.first_name|default:user.email }},</h2>
+            
+            <p style="color: #6c757d; line-height: 1.6; margin-bottom: 20px;">
+                Thank you for creating an account with LinkedRite! To complete your registration and verify your email address, please click the button below:
+            </p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="{{ protocol }}://{{ domain }}{% url 'accounts:verify_email' token %}" 
+                   style="display: inline-block; background-color: #007bff; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                    Verify Email Address
+                </a>
+            </div>
+            
+            <p style="color: #6c757d; line-height: 1.6;">
+                Or copy and paste this link into your browser:
+            </p>
+            
+            <p style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; word-break: break-all; color: #495057;">
+                {{ protocol }}://{{ domain }}{% url 'accounts:verify_email' token %}
+            </p>
+            
+            <p style="color: #6c757d; line-height: 1.6; margin-top: 20px;">
+                This verification link will expire in 24 hours. If you didn't create an account with LinkedRite, please ignore this email.
+            </p>
+            
+            <hr style="border: none; border-top: 1px solid #e9ecef; margin: 30px 0;">
+            
+            <p style="color: #6c757d; font-size: 14px; text-align: center;">
+                Best regards,<br>
+                The LinkedRite Team
+            </p>
+        </div>
+        
+        <div style="background-color: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #6c757d;">
+            &copy; 2024 LinkedRite. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>

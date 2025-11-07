@@ -1,0 +1,61 @@
+{% extends 'base/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Profile - LinkedRite{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Account Menu</h5>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="{% url 'accounts:profile' %}">
+                                <i class="fas fa-user"></i> Profile
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'rewrite:dashboard' %}">
+                                <i class="fas fa-chart-bar"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'rewrite:pricing' %}">
+                                <i class="fas fa-crown"></i> Subscription
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h2 class="mb-4">Profile Settings</h2>
+                    
+                    <div class="mb-4">
+                        <h5>Account Information</h5>
+                        <p><strong>Email:</strong> {{ user.email }} 
+                            {% if user.email_verified %}
+                                <span class="badge bg-success"><i class="fas fa-check"></i> Verified</span>
+                            {% else %}
+                                <span class="badge bg-warning"><i class="fas fa-exclamation-triangle"></i> Not Verified</span>
+                                <a href="{% url 'accounts:resend_verification' %}" class="btn btn-sm btn-outline-primary ms-2">Resend Verification</a>
+                            {% endif %}
+                        </p>
+                        <p><strong>Member Since:</strong> {{ user.date_joined|date:"F d, Y" }}</p>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h5 class="mb-3">Update Profile</h5>
+                    {% crispy form %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+import dj_database_url
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -38,6 +39,10 @@ ALLOWED_HOSTS = ["*"]
 INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
+    "crispy_forms",
+    "crispy_bootstrap5",
+    "accounts.apps.AccountsConfig",
+    "subscriptions.apps.SubscriptionsConfig",
     "rewrite.apps.RewriteConfig",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -57,6 +62,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "accounts.middleware.AdminAccountSyncMiddleware",  # Sync admin account on first request
 ]
 
 ROOT_URLCONF = "Linkedrite.urls"
@@ -65,7 +71,7 @@ ROOT_URLCONF = "Linkedrite.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -84,12 +90,97 @@ WSGI_APPLICATION = "Linkedrite.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+# Check if DATABASE_URL is provided
+DATABASE_URL = os.getenv('DATABASE_URL')
+
+if DATABASE_URL:
+    # Use dj-database-url to parse DATABASE_URL
+    DATABASES = {
+        'default': dj_database_url.parse(DATABASE_URL)
     }
-}
+else:
+    # Check for individual database settings
+    DB_ENGINE = os.getenv('DB_ENGINE', 'django.db.backends.sqlite3')
+    DB_NAME = os.getenv('DB_NAME', str(BASE_DIR / 'db.sqlite3'))
+    DB_USER = os.getenv('DB_USER', '')
+    DB_PASSWORD = os.getenv('DB_PASSWORD', '')
+    DB_HOST = os.getenv('DB_HOST', '')
+    DB_PORT = os.getenv('DB_PORT', '')
+
+    if DB_ENGINE == 'django.db.backends.sqlite3':
+        # SQLite configuration
+        DATABASES = {
+            'default': {
+                'ENGINE': DB_ENGINE,
+                'NAME': DB_NAME,
+            }
+        }
+    else:
+        # Other database configurations (PostgreSQL, MySQL, etc.)
+        DATABASES = {
+            'default': {
+                'ENGINE': DB_ENGINE,
+                'NAME': DB_NAME,
+                'USER': DB_USER,
+                'PASSWORD': DB_PASSWORD,
+                'HOST': DB_HOST,
+                'PORT': DB_PORT,
+            }
+        }
+
+
+# Redis and Cache Configuration
+REDIS_URL = os.getenv('REDIS_URL')
+if REDIS_URL:
+    # Use REDIS_URL if provided
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+            'LOCATION': REDIS_URL,
+            'OPTIONS': {
+                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            },
+            'TIMEOUT': int(os.getenv('CACHE_TTL', 300)),  # Default 5 minutes
+        }
+    }
+    
+    # Optional: Use Redis for session backend
+    if os.getenv('REDIS_SESSION_BACKEND', 'False') == 'True':
+        SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+        SESSION_CACHE_ALIAS = 'default'
+else:
+    # Check for individual Redis settings
+    REDIS_HOST = os.getenv('REDIS_HOST')
+    if REDIS_HOST:
+        REDIS_PORT = int(os.getenv('REDIS_PORT', 6379))
+        REDIS_DB = int(os.getenv('REDIS_DB', 0))
+        REDIS_PASSWORD = os.getenv('REDIS_PASSWORD', '')
+        
+        REDIS_CONNECTION_STRING = f"redis://:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}" if REDIS_PASSWORD else f"redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}"
+        
+        CACHES = {
+            'default': {
+                'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+                'LOCATION': REDIS_CONNECTION_STRING,
+                'OPTIONS': {
+                    'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+                },
+                'TIMEOUT': int(os.getenv('CACHE_TTL', 300)),
+            }
+        }
+        
+        # Optional: Use Redis for session backend
+        if os.getenv('REDIS_SESSION_BACKEND', 'False') == 'True':
+            SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+            SESSION_CACHE_ALIAS = 'default'
+    else:
+        # Default to local memory cache if Redis is not configured
+        CACHES = {
+            'default': {
+                'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+                'LOCATION': 'unique-snowflake',
+            }
+        }
 
 
 # Password validation
@@ -147,4 +238,28 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_THROTTLE_RATES": {"anon": "10/day", "user": "50/day"},
     "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
+    ],
 }
+
+# Crispy Forms Settings
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+# Email Configuration
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", 587))
+EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True") == "True"
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "LinkedRite <noreply@linkedrite.com>")
+
+# Authentication Settings
+LOGIN_URL = "/accounts/login/"
+LOGIN_REDIRECT_URL = "/dashboard/"
+LOGOUT_REDIRECT_URL = "/"
+
+# Custom User Model (we'll create this next)
+AUTH_USER_MODEL = "accounts.CustomUser"
