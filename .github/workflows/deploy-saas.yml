@@ -100,6 +100,52 @@ jobs:
         # Navigate to deployment directory
         cd ~/linkedrite
         
+        # Function to free port 8000
+        free_port_8000() {
+          echo "Checking if port 8000 is in use..."
+          
+          # Find process using port 8000
+          PORT_PID=$(sudo lsof -t -i:8000 || true)
+          
+          if [ ! -z "$PORT_PID" ]; then
+            echo "Port 8000 is in use by PID: $PORT_PID"
+            
+            # Try to identify the process
+            PROCESS_INFO=$(ps -p $PORT_PID -o comm= 2>/dev/null || echo "unknown")
+            echo "Process: $PROCESS_INFO"
+            
+            # Kill the process
+            echo "Stopping process using port 8000..."
+            sudo kill -9 $PORT_PID || true
+            sleep 2
+          fi
+          
+          # Also check for any Docker container using port 8000
+          echo "Checking for Docker containers using port 8000..."
+          CONTAINERS=$(docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Ports}}" | grep -E "0\.0\.0\.0:8000|:::8000" | awk '{print $1}' || true)
+          
+          if [ ! -z "$CONTAINERS" ]; then
+            echo "Found Docker containers using port 8000:"
+            echo "$CONTAINERS"
+            for CONTAINER in $CONTAINERS; do
+              if [ "$CONTAINER" != "CONTAINER" ]; then
+                echo "Stopping container: $CONTAINER"
+                docker stop $CONTAINER || true
+                docker rm $CONTAINER || true
+              fi
+            done
+          fi
+          
+          # Clean up any linkedrite containers
+          echo "Cleaning up any existing linkedrite containers..."
+          docker ps -a | grep linkedrite | awk '{print $1}' | xargs -r docker rm -f || true
+          
+          echo "Port 8000 is now free"
+        }
+        
+        # Free port 8000 before deployment
+        free_port_8000
+        
         # Load Docker images
         echo "Loading Docker images..."
         docker load < linkedrite-images.tar.gz

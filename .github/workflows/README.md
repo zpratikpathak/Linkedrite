@@ -146,6 +146,29 @@ docker logs linkedrite
 
 ## Troubleshooting
 
+### Port 8000 Already in Use Error
+If you get "port is already allocated" error during deployment:
+
+**Automatic Fix (Built-in)**:
+The deployment scripts now automatically free up port 8000 by:
+- Checking for processes using port 8000
+- Stopping Docker containers using the port
+- Cleaning up old LinkedRite containers
+
+**Manual Fix**:
+If the automatic fix doesn't work, run this on your server:
+```bash
+# Quick fix - force free port 8000
+sudo lsof -t -i:8000 | xargs -r sudo kill -9
+docker ps -q --filter "publish=8000" | xargs -r docker stop
+docker ps -aq --filter "name=linkedrite" | xargs -r docker rm -f
+
+# Or use the provided script
+cd ~/linkedrite
+chmod +x scripts/fix-port-8000.sh
+./scripts/fix-port-8000.sh
+```
+
 ### Container won't start
 Check logs:
 ```bash

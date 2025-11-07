@@ -280,11 +280,22 @@ docker-compose up --build web db
 
 ### Common Issues
 
-1. **Email not sending**: Check EMAIL_HOST_PASSWORD and EMAIL_USE_TLS settings
-2. **Migration errors**: Run `python manage.py migrate --run-syncdb`
-3. **Static files not loading**: Run `python manage.py collectstatic`
-4. **Import errors**: Ensure all packages in requirements.txt are installed
-5. **Database connection issues**: 
+1. **Port 8000 Already in Use (Deployment Error)**:
+   - Error: `Bind for 0.0.0.0:8000 failed: port is already allocated`
+   - The deployment scripts now automatically free port 8000
+   - Manual fix: `sudo lsof -t -i:8000 | xargs -r sudo kill -9`
+   - Or run: `bash scripts/fix-port-8000.sh`
+   - See [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) for detailed solutions
+
+2. **Email not sending**: Check EMAIL_HOST_PASSWORD and EMAIL_USE_TLS settings
+
+3. **Migration errors**: Run `python manage.py migrate --run-syncdb`
+
+4. **Static files not loading**: Run `python manage.py collectstatic`
+
+5. **Import errors**: Ensure all packages in requirements.txt are installed
+
+6. **Database connection issues**: 
    - For PostgreSQL/MySQL, ensure the database server is running
    - Check credentials in `.env` file
    - For Docker, ensure containers can communicate
