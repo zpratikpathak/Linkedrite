@@ -38,36 +38,9 @@ USER appuser
 # Expose port
 EXPOSE 8000
 
-# Create entrypoint script
-RUN echo '#!/bin/sh\n\
-set -e\n\
-\n\
-# Wait for database to be ready (if not SQLite)\n\
-if [ -n "$DATABASE_URL" ] || [ "$DB_ENGINE" != "django.db.backends.sqlite3" ]; then\n\
-    echo "Waiting for database..."\n\
-    while ! python manage.py dbshell < /dev/null 2>/dev/null; do\n\
-        echo "Database is unavailable - sleeping"\n\
-        sleep 1\n\
-    done\n\
-    echo "Database is up - continuing..."\n\
-fi\n\
-\n\
-# Run migrations\n\
-echo "Running migrations..."\n\
-python manage.py migrate --noinput\n\
-\n\
-# Create default admin if configured\n\
-echo "Checking for default admin..."\n\
-python manage.py create_default_admin\n\
-\n\
-# Collect static files\n\
-echo "Collecting static files..."\n\
-python manage.py collectstatic --noinput\n\
-\n\
-# Start the application\n\
-echo "Starting application..."\n\
-exec gunicorn Linkedrite.wsgi:application --bind 0.0.0.0:8000 --workers 3\n\
-' > /app/entrypoint.sh && chmod +x /app/entrypoint.sh
+# Copy entrypoint script
+COPY --chown=appuser:appuser docker-entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
 ENTRYPOINT ["/app/entrypoint.sh"]
 

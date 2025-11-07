@@ -168,21 +168,12 @@ jobs:
         echo "Starting services..."
         docker-compose -f docker-compose.prod.yml up -d
         
-        # Wait for database to be ready
-        echo "Waiting for database to be ready..."
-        sleep 10
+        # Wait for services to initialize
+        echo "Waiting for services to initialize..."
+        sleep 15
         
-        # Run migrations
-        echo "Running database migrations..."
-        docker-compose -f docker-compose.prod.yml exec -T web python manage.py migrate --noinput
-        
-        # Create/update admin account
-        echo "Setting up admin account..."
-        docker-compose -f docker-compose.prod.yml exec -T web python manage.py create_default_admin || true
-        
-        # Collect static files
-        echo "Collecting static files..."
-        docker-compose -f docker-compose.prod.yml exec -T web python manage.py collectstatic --noinput
+        # The entrypoint script handles migrations, admin creation, and static files
+        # Just check if everything is running properly
         
         # Check container health
         echo "Checking container health..."
