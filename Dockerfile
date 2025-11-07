@@ -19,6 +19,8 @@ RUN useradd -m -u 1000 appuser
 WORKDIR /app
 
 # Copy requirements and install Python dependencies
+# ARG for cache busting when requirements change
+ARG REQUIREMENTS_HASH
 COPY requirements.txt .
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt

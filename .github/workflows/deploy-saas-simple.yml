@@ -18,7 +18,9 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build . -t linkedrite:latest
+        # Build with build argument to bust cache if requirements changed
+        docker build . -t linkedrite:latest \
+          --build-arg REQUIREMENTS_HASH=$(sha256sum requirements.txt | cut -d' ' -f1)
         docker tag linkedrite:latest linkedrite:${{ github.sha }}
 
     - name: Save Docker image

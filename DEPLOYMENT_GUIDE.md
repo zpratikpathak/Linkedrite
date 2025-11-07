@@ -135,6 +135,25 @@ docker-compose exec web python manage.py create_default_admin
 docker-compose exec web python manage.py createsuperuser
 ```
 
+### 5. ModuleNotFoundError: No module named 'dj_database_url'
+
+**Error**: Missing Python dependencies in container
+
+**Solution**:
+```bash
+# Option 1: Quick fix (temporary)
+docker exec linkedrite_web_1 pip install dj-database-url psycopg2-binary redis django-redis asgiref
+docker-compose restart web
+
+# Option 2: Run fix script
+chmod +x scripts/fix-missing-dependencies.sh
+./scripts/fix-missing-dependencies.sh
+
+# Option 3: Rebuild image (permanent fix)
+docker-compose build --no-cache web
+docker-compose up -d
+```
+
 ## Server Maintenance
 
 ### Viewing Logs
