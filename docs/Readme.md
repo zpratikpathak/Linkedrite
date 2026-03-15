@@ -2,73 +2,122 @@
   <img src="icon.png" alt="Linkedrite">
 </div>
 
-<!-- ![GitHub commit activity](https://img.shields.io/github/commit-activity/:interval/zpratikpathak/Linkedrite) -->
-<!-- ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/zpratikpathak/https%3A%2F%2Fgithub.com%2Fzpratikpathak%2FLinkedrite/Deploy%20to%20server) -->
+LinkedRite is an AI-powered LinkedIn post rewriter that helps you craft professional, engaging posts. It corrects grammar, generates relatable context, adds emojis, formats your post, and more. Use it via the [web app](https://linkedrite.pratikpathak.com) or the Chrome extension.
 
+## Features
 
+- **AI Rewriting** -- Rewrites your LinkedIn posts to be more professional and engaging
+- **Grammar Correction** -- Fixes grammatical errors automatically
+- **Emoji Support** -- Adds relevant emojis to boost engagement
+- **Hashtag Generation** -- Adds relevant hashtags for visibility
+- **User Accounts** -- Sign up, email verification, and profile management
+- **Subscription Plans** -- Free (20 rewrites/day) and Premium (unlimited) tiers
+- **Usage Tracking** -- Timezone-aware daily limits with dashboard analytics
+- **Multi-Provider AI** -- Supports Google Gemini and Azure OpenAI (configurable via env)
 
-Linkedrite 🤖 is a tool designed to help you craft professional LinkedIn posts. It can correct grammar, generate relatable context, add emojis 😃, format your post, and much more. You can use Linkedrite in two ways: either by installing the extension or by visiting our website, [Linkedrite](https://linkedrite.pratikpathak.com).
+## Tech Stack
 
-# Features 🌟
+- **Backend:** Django 5.2, Django REST Framework
+- **AI:** Google Gemini (`google-genai`) / Azure OpenAI (`openai`)
+- **Frontend:** Tailwind CSS (CDN), Alpine.js
+- **Database:** SQLite (dev) / PostgreSQL (prod)
+- **Cache:** Redis (optional)
+- **Deployment:** Docker, Docker Compose, GitHub Actions
 
-Linkedrite offers a range of features to help you craft professional LinkedIn posts:
+## Quick Start
 
-1. **Engaging First Line**: Linkedrite writes an engaging first line that grabs the reader's attention and compels them to read the entire article. With AI-generated suggestions, you can create a captivating opening that piques curiosity and entices readers to explore the rest of your content.
-2. **Grammar Correction**: Linkedrite can correct grammatical errors in your posts to ensure they are professional and polished.
-3. **Context Generation**: Linkedrite can generate relatable context for your posts based on the initial input.
-4. **Emoji Addition**: Linkedrite can add relevant emojis to your posts to make them more engaging.
-5. **Post Formatting**: Linkedrite can format your posts to ensure they are easy to read and professional-looking.
+### Prerequisites
 
-# Usage 🚀
+- Python 3.13+
+- [uv](https://docs.astral.sh/uv/) package manager
 
-Here's how you can use Linkedrite:
+### Installation
 
-1. **Install the Extension**: Install the Linkedrite extension in your browser. Once installed, you can use Linkedrite directly from your LinkedIn post editor.
-2. **Use the Website**: Visit [Linkedrite](https://Linkedrite.pratikpathak.com) and enter your initial post. Linkedrite will generate a professional post for you.
-
-For detailed usage instructions, please refer to the Installation section.
-
-
-# Installation 🛠️
-
-You can install Linkedrite using either Poetry or the requirements.txt file.
-
-## Install via UV 📚
-
-```cmd
-poetry sync
-```
->Make sure you have already installed UV, if not run this command `pip install uv`
-
-<div align="center">
-
-**OR 🔄**
-
-</div>
-
-## Install via Requirements.txt 📄
-```cmd
-pip install -r requirements.txt
+```bash
+git clone https://github.com/zpratikpathak/Linkedrite.git
+cd Linkedrite
+uv sync
 ```
 
-## Setup .ENV file 🗂️
-Create a `.env` file in the root directory and add the following credentials:
-```
-AZURE_OPENAI_API_KEY = "xxxxxxxxxxxxxxxxxxxxxxxx"
-AZURE_API_ENDPOINT = "https://xxxxxxxx.openai.azure.com/"
-API_VERSION = "2023-12-01-preview"
-DEPLOYMENT_MODEL = "XXXXXXXXXXXXXXXXXXXX"
+### Environment Setup
+
+Copy the example env file and fill in your values:
+
+```bash
+cp .env.example .env
 ```
 
-**Note**: Not sure how to get these credentials? Click here to find out.
+Key variables to set:
 
-# How to run 🏃‍♂️
-## Run via UV
-```cmd
+```env
+SECRET_KEY=your-secret-key
+DEBUG=True
+ALLOWED_HOSTS=localhost,127.0.0.1
+
+AI_PROVIDER=google
+GOOGLE_API_KEY=your-google-gemini-api-key
+GOOGLE_MODEL=gemini-3-flash-preview
+
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USE_TLS=True
+EMAIL_HOST_USER=your-email@gmail.com
+EMAIL_HOST_PASSWORD=your-app-password
+DEFAULT_FROM_EMAIL=LinkedRite <noreply@yourdomain.com>
+```
+
+See `.env.example` for all available options including Azure OpenAI, database, Redis, and admin account configuration.
+
+### Run Locally
+
+```bash
+uv run python manage.py migrate
 uv run python manage.py runserver
 ```
 
-## Run using python
-```cmd
-python manage.py runserver
+The app will be available at `http://localhost:8000`.
+
+### Create Admin User (Optional)
+
+Add these to your `.env` and the admin account will be created automatically on first request:
+
+```env
+ADMIN_EMAIL=admin@yourdomain.com
+ADMIN_PASSWORD=your-secure-password
 ```
+
+Or run manually:
+
+```bash
+uv run python manage.py create_default_admin
+```
+
+## Production Deployment
+
+### Docker Compose
+
+```bash
+docker-compose up -d
+```
+
+This starts the web app (port 8009), PostgreSQL, and Redis.
+
+### Production `.env`
+
+For production, make sure to set:
+
+```env
+SECRET_KEY=a-long-random-secret-key
+DEBUG=False
+ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
+SITE_URL=https://yourdomain.com
+USE_HTTPS=True
+```
+
+## Chrome Extension
+
+The `ChromeExtension/` directory contains a Chrome extension that integrates LinkedRite directly into the LinkedIn post editor.
+
+## License
+
+ISC
