@@ -102,66 +102,20 @@ jobs:
         # Navigate to deployment directory
         cd ~/linkedrite
         
-        # Function to free port 8009
-        free_port_8009() {
-          echo "Checking if port 8009 is in use..."
-          
-          # Find process using port 8009
-          PORT_PID=$(sudo lsof -t -i:8009 || true)
-          
-          if [ ! -z "$PORT_PID" ]; then
-            echo "Port 8009 is in use by PID: $PORT_PID"
-            
-            # Try to identify the process
-            PROCESS_INFO=$(ps -p $PORT_PID -o comm= 2>/dev/null || echo "unknown")
-            echo "Process: $PROCESS_INFO"
-            
-            # Kill the process
-            echo "Stopping process using port 8009..."
-            sudo kill -9 $PORT_PID || true
-            sleep 2
-          fi
-          
-          # Also check for any Docker container using port 8009
-          echo "Checking for Docker containers using port 8009..."
-          CONTAINERS=$(docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Ports}}" | grep -E "0\.0\.0\.0:8009|:::8009" | awk '{print $1}' || true)
-          
-          if [ ! -z "$CONTAINERS" ]; then
-            echo "Found Docker containers using port 8009:"
-            echo "$CONTAINERS"
-            for CONTAINER in $CONTAINERS; do
-              if [ "$CONTAINER" != "CONTAINER" ]; then
-                echo "Stopping container: $CONTAINER"
-                docker stop $CONTAINER || true
-                docker rm $CONTAINER || true
-              fi
-            done
-          fi
-          
-          # Clean up any linkedrite containers
-          echo "Cleaning up any existing linkedrite containers..."
-          docker ps -a | grep linkedrite | awk '{print $1}' | xargs -r docker rm -f || true
-          
-          echo "Port 8009 is now free"
-        }
+        # Stop and remove all linkedrite containers
+        echo "Stopping existing linkedrite containers..."
+        docker-compose -f docker-compose.prod.yml down || true
+        docker ps -a | grep linkedrite | awk '{print $1}' | xargs -r docker rm -f || true
         
-        # Free port 8009 before deployment
-        free_port_8009
+        # Remove ALL old linkedrite images before loading new ones
+        echo "Removing old linkedrite images..."
+        docker images "linkedrite" -q | xargs -r docker rmi -f || true
         
-        # Load Docker images
-        echo "Loading Docker images..."
+        # Load new Docker images
+        echo "Loading new Docker images..."
         docker load < linkedrite-images.tar.gz
         
-        # Backup current .env if exists
-        if [ -f .env ]; then
-          cp .env .env.backup.$(date +%Y%m%d_%H%M%S)
-        fi
-        
-        # Stop and remove old containers (if any)
-        echo "Stopping old containers..."
-        docker-compose -f docker-compose.prod.yml down || true
-        
-        # Remove old images to free up space
+        # Clean up dangling images
         docker image prune -f
         
         # Start services
