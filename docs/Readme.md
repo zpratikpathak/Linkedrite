@@ -59,6 +59,7 @@ AZURE_API_ENDPOINT = "https://xxxxxxxx.openai.azure.com/"
 API_VERSION = "2023-12-01-preview"
 DEPLOYMENT_MODEL = "XXXXXXXXXXXXXXXXXXXX"
 ```
+
 **Note**: Not sure how to get these credentials? Click here to find out.
 
 # How to run 🏃‍♂️
