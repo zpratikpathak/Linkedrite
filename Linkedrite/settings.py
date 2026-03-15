@@ -266,15 +266,25 @@ AUTH_USER_MODEL = "accounts.CustomUser"
 # Security Settings for Production
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-# CSRF Settings - Fix for CSRF verification failed error
-CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',') if os.getenv('CSRF_TRUSTED_ORIGINS') else []
+# CSRF trusted origins - built from ALLOWED_HOSTS automatically
+CSRF_TRUSTED_ORIGINS = []
 
-# If SITE_URL is set, add it to CSRF_TRUSTED_ORIGINS
-SITE_URL = os.getenv('SITE_URL', '')
+# Add explicit CSRF_TRUSTED_ORIGINS from env if set
+_csrf_env = os.getenv('CSRF_TRUSTED_ORIGINS', '').strip()
+if _csrf_env:
+    CSRF_TRUSTED_ORIGINS.extend([o.strip() for o in _csrf_env.split(',') if o.strip()])
+
+# Add SITE_URL if set
+SITE_URL = os.getenv('SITE_URL', '').strip()
 if SITE_URL:
-    CSRF_TRUSTED_ORIGINS.append(SITE_URL)
-    # Also add without trailing slash
     CSRF_TRUSTED_ORIGINS.append(SITE_URL.rstrip('/'))
+
+# Auto-generate from ALLOWED_HOSTS (https + http for each host)
+for host in ALLOWED_HOSTS:
+    host = host.strip()
+    if host and host != '*':
+        CSRF_TRUSTED_ORIGINS.append(f'https://{host}')
+        CSRF_TRUSTED_ORIGINS.append(f'http://{host}')
 
 # Add localhost variants for development
 if DEBUG:
@@ -284,6 +294,9 @@ if DEBUG:
         'http://localhost:8001',
         'http://127.0.0.1:8001',
     ])
+
+# Deduplicate
+CSRF_TRUSTED_ORIGINS = list(dict.fromkeys(CSRF_TRUSTED_ORIGINS))
 
 # Security headers for production
 if not DEBUG:
