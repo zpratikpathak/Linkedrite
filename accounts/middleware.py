@@ -10,6 +10,20 @@ from io import StringIO
 import sys
 
 
+class FixDuplicateOriginMiddleware:
+    """Fixes Origin header when a reverse proxy duplicates it (e.g. Origin becomes
+    'https://example.com,https://example.com'). Must run before CsrfViewMiddleware."""
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        origin = request.META.get('HTTP_ORIGIN', '')
+        if ',' in origin:
+            request.META['HTTP_ORIGIN'] = origin.split(',')[0].strip()
+        return self.get_response(request)
+
+
 VERIFICATION_EXEMPT_PATHS = [
     '/accounts/verify-email/',
     '/accounts/resend-verification/',
