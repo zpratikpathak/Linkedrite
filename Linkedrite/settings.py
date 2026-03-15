@@ -62,7 +62,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "accounts.middleware.AdminAccountSyncMiddleware",  # Sync admin account on first request
+    "accounts.middleware.AdminAccountSyncMiddleware",
+    "accounts.middleware.EmailVerificationMiddleware",
 ]
 
 ROOT_URLCONF = "Linkedrite.urls"
@@ -294,7 +295,7 @@ if not DEBUG:
     
 # Session security
 SESSION_COOKIE_HTTPONLY = True
-CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = False
 
 # In production with HTTPS
 if os.getenv('USE_HTTPS', 'False') == 'True':

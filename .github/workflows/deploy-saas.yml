@@ -23,7 +23,7 @@ jobs:
             image: linkedrite:latest
             restart: always
             ports:
-              - "8000:8000"
+              - "8009:8000"
             env_file:
               - .env
             depends_on:
@@ -102,32 +102,32 @@ jobs:
         # Navigate to deployment directory
         cd ~/linkedrite
         
-        # Function to free port 8000
-        free_port_8000() {
-          echo "Checking if port 8000 is in use..."
+        # Function to free port 8009
+        free_port_8009() {
+          echo "Checking if port 8009 is in use..."
           
-          # Find process using port 8000
-          PORT_PID=$(sudo lsof -t -i:8000 || true)
+          # Find process using port 8009
+          PORT_PID=$(sudo lsof -t -i:8009 || true)
           
           if [ ! -z "$PORT_PID" ]; then
-            echo "Port 8000 is in use by PID: $PORT_PID"
+            echo "Port 8009 is in use by PID: $PORT_PID"
             
             # Try to identify the process
             PROCESS_INFO=$(ps -p $PORT_PID -o comm= 2>/dev/null || echo "unknown")
             echo "Process: $PROCESS_INFO"
             
             # Kill the process
-            echo "Stopping process using port 8000..."
+            echo "Stopping process using port 8009..."
             sudo kill -9 $PORT_PID || true
             sleep 2
           fi
           
-          # Also check for any Docker container using port 8000
-          echo "Checking for Docker containers using port 8000..."
-          CONTAINERS=$(docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Ports}}" | grep -E "0\.0\.0\.0:8000|:::8000" | awk '{print $1}' || true)
+          # Also check for any Docker container using port 8009
+          echo "Checking for Docker containers using port 8009..."
+          CONTAINERS=$(docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Ports}}" | grep -E "0\.0\.0\.0:8009|:::8009" | awk '{print $1}' || true)
           
           if [ ! -z "$CONTAINERS" ]; then
-            echo "Found Docker containers using port 8000:"
+            echo "Found Docker containers using port 8009:"
             echo "$CONTAINERS"
             for CONTAINER in $CONTAINERS; do
               if [ "$CONTAINER" != "CONTAINER" ]; then
@@ -142,11 +142,11 @@ jobs:
           echo "Cleaning up any existing linkedrite containers..."
           docker ps -a | grep linkedrite | awk '{print $1}' | xargs -r docker rm -f || true
           
-          echo "Port 8000 is now free"
+          echo "Port 8009 is now free"
         }
         
-        # Free port 8000 before deployment
-        free_port_8000
+        # Free port 8009 before deployment
+        free_port_8009
         
         # Load Docker images
         echo "Loading Docker images..."
@@ -188,7 +188,7 @@ jobs:
         docker-compose -f docker-compose.prod.yml logs --tail=50 web
         
         echo "Deployment completed successfully!"
-        echo "LinkedRite is now accessible at http://$(hostname -I | awk '{print $1}'):8000"
+        echo "LinkedRite is now accessible at http://$(hostname -I | awk '{print $1}'):8009"
         EOF
         
         chmod +x deploy.sh
@@ -239,12 +239,12 @@ jobs:
           while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
             echo "Attempt $ATTEMPT of $MAX_ATTEMPTS..."
             
-            HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000 || echo "000")
+            HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8009 || echo "000")
             
             if [ "$HTTP_STATUS" = "200" ] || [ "$HTTP_STATUS" = "302" ] || [ "$HTTP_STATUS" = "301" ]; then
               echo "✅ Application is responding (HTTP $HTTP_STATUS)"
-              echo "🎉 Deployment successful! LinkedRite is running on port 8000"
-              echo "URL: http://${{ secrets.SERVER_HOST }}:8000"
+              echo "🎉 Deployment successful! LinkedRite is running on port 8009"
+              echo "URL: http://${{ secrets.SERVER_HOST }}:8009"
               exit 0
             else
               echo "Response: HTTP $HTTP_STATUS"
@@ -267,7 +267,7 @@ jobs:
           echo "Recent logs:"
           docker-compose -f docker-compose.prod.yml logs --tail=30 web
           echo ""
-          echo "You can manually check: http://${{ secrets.SERVER_HOST }}:8000"
+          echo "You can manually check: http://${{ secrets.SERVER_HOST }}:8009"
           
           # Exit with success since the container is running
           exit 0

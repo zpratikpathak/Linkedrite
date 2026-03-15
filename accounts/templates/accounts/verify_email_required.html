@@ -1,0 +1,60 @@
+{% extends 'base/modern_base.html' %}
+
+{% block title %}Verify Your Email - LinkedRite{% endblock %}
+
+{% block content %}
+<div class="min-h-[70vh] flex items-center justify-center px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full text-center">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 md:p-10">
+            <!-- Icon -->
+            <div class="mx-auto w-20 h-20 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center mb-6">
+                <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
+            </div>
+
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+                Verify Your Email
+            </h1>
+
+            <p class="text-gray-600 dark:text-gray-300 mb-2">
+                We've sent a verification link to:
+            </p>
+            <p class="font-semibold text-indigo-600 dark:text-indigo-400 mb-6">
+                {{ user.email }}
+            </p>
+
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-8">
+                Please check your inbox and click the verification link to start using LinkedRite. The link expires in 24 hours.
+            </p>
+
+            <!-- Resend Button -->
+            <form method="get" action="{% url 'accounts:resend_verification' %}">
+                <button type="submit" class="w-full py-3 px-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 mb-4">
+                    Resend Verification Email
+                </button>
+            </form>
+
+            <div class="flex items-center justify-center space-x-4 text-sm">
+                <a href="{% url 'accounts:logout' %}" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors">
+                    Sign out
+                </a>
+                <span class="text-gray-300 dark:text-gray-600">|</span>
+                <a href="{% url 'accounts:profile' %}" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors">
+                    Update email address
+                </a>
+            </div>
+
+            <!-- Help Text -->
+            <div class="mt-8 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl text-left">
+                <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Didn't receive the email?</p>
+                <ul class="text-xs text-gray-500 dark:text-gray-400 space-y-1">
+                    <li>- Check your spam or junk folder</li>
+                    <li>- Make sure your email address is correct</li>
+                    <li>- Click "Resend Verification Email" above</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

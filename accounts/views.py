@@ -55,10 +55,9 @@ def signup_view(request):
                 fail_silently=False,
             )
             
-            # Log the user in
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-            messages.success(request, 'Account created successfully! Please check your email to verify your account.')
-            return redirect('rewrite:dashboard')
+            messages.success(request, 'Account created! Please check your email to verify your account.')
+            return redirect('accounts:verify_email_required')
     else:
         form = SignUpForm()
     
@@ -91,6 +90,13 @@ def logout_view(request):
     return redirect('rewrite:index')
 
 
+@login_required
+def verify_email_required(request):
+    if request.user.email_verified:
+        return redirect('rewrite:dashboard')
+    return render(request, 'accounts/verify_email_required.html')
+
+
 def verify_email(request, token):
     verification = get_object_or_404(EmailVerificationToken, token=token)
     
@@ -117,7 +123,7 @@ def verify_email(request, token):
 def resend_verification(request):
     if request.user.email_verified:
         messages.info(request, 'Your email is already verified.')
-        return redirect('dashboard')
+        return redirect('rewrite:dashboard')
     
     # Invalidate old tokens
     EmailVerificationToken.objects.filter(
@@ -148,7 +154,7 @@ def resend_verification(request):
     )
     
     messages.success(request, 'Verification email sent! Please check your inbox.')
-    return redirect('dashboard')
+    return redirect('accounts:verify_email_required')
 
 
 def password_reset_request(request):

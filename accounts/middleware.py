@@ -1,12 +1,47 @@
 """
-Middleware to sync admin account on first request after server startup.
-This avoids Django's warning about database access during initialization.
+Middleware for admin account sync and email verification enforcement.
 """
 import os
 import threading
 from django.core.management import call_command
+from django.shortcuts import redirect
+from django.urls import reverse
 from io import StringIO
 import sys
+
+
+VERIFICATION_EXEMPT_PATHS = [
+    '/accounts/verify-email/',
+    '/accounts/resend-verification/',
+    '/accounts/logout/',
+    '/accounts/login/',
+    '/accounts/signup/',
+    '/accounts/password-reset/',
+    '/accounts/profile/',
+    '/admin/',
+    '/static/',
+    '/favicon.ico',
+]
+
+
+class EmailVerificationMiddleware:
+    """Redirects authenticated but unverified users to the verification page."""
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if (
+            request.user.is_authenticated
+            and not request.user.email_verified
+            and not self._is_exempt(request.path)
+        ):
+            return redirect('accounts:verify_email_required')
+
+        return self.get_response(request)
+
+    def _is_exempt(self, path):
+        return any(path.startswith(p) for p in VERIFICATION_EXEMPT_PATHS)
 
 
 class AdminAccountSyncMiddleware:

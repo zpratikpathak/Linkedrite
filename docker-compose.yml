@@ -5,7 +5,7 @@ services:
   web:
     build: .
     ports:
-      - "8000:8000"
+      - "8009:8000"
     env_file:
       - .env
     volumes:
@@ -53,7 +53,7 @@ volumes:
 #   web:
 #     build: .
 #     ports:
-#       - "8000:8000"
+#       - "8009:8000"
 #     env_file:
 #       - .env
 #     volumes:
@@ -66,7 +66,7 @@ volumes:
 #   web:
 #     build: .
 #     ports:
-#       - "8000:8000"
+#       - "8009:8000"
 #     env_file:
 #       - .env
 #     environment:
@@ -80,7 +80,7 @@ volumes:
 #   web:
 #     build: .
 #     ports:
-#       - "8000:8000"
+#       - "8009:8000"
 #     env_file:
 #       - .env
 #     environment:

@@ -38,32 +38,32 @@ jobs:
         # Navigate to deployment directory
         cd ~/linkedrite
         
-        # Function to free port 8000
-        free_port_8000() {
-          echo "Checking if port 8000 is in use..."
+        # Function to free port 8009
+        free_port_8009() {
+          echo "Checking if port 8009 is in use..."
           
-          # Find process using port 8000
-          PORT_PID=$(sudo lsof -t -i:8000 || true)
+          # Find process using port 8009
+          PORT_PID=$(sudo lsof -t -i:8009 || true)
           
           if [ ! -z "$PORT_PID" ]; then
-            echo "Port 8000 is in use by PID: $PORT_PID"
+            echo "Port 8009 is in use by PID: $PORT_PID"
             
             # Try to identify the process
             PROCESS_INFO=$(ps -p $PORT_PID -o comm= 2>/dev/null || echo "unknown")
             echo "Process: $PROCESS_INFO"
             
             # Kill the process
-            echo "Stopping process using port 8000..."
+            echo "Stopping process using port 8009..."
             sudo kill -9 $PORT_PID || true
             sleep 2
           fi
           
-          # Also check for any Docker container using port 8000
-          echo "Checking for Docker containers using port 8000..."
-          CONTAINERS=$(docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Ports}}" | grep -E "0\.0\.0\.0:8000|:::8000" | awk '{print $1}' || true)
+          # Also check for any Docker container using port 8009
+          echo "Checking for Docker containers using port 8009..."
+          CONTAINERS=$(docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Ports}}" | grep -E "0\.0\.0\.0:8009|:::8009" | awk '{print $1}' || true)
           
           if [ ! -z "$CONTAINERS" ]; then
-            echo "Found Docker containers using port 8000:"
+            echo "Found Docker containers using port 8009:"
             echo "$CONTAINERS"
             for CONTAINER in $CONTAINERS; do
               if [ "$CONTAINER" != "CONTAINER" ]; then
@@ -74,11 +74,11 @@ jobs:
             done
           fi
           
-          echo "Port 8000 is now free"
+          echo "Port 8009 is now free"
         }
         
-        # Free port 8000 before deployment
-        free_port_8000
+        # Free port 8009 before deployment
+        free_port_8009
         
         # Load Docker image
         echo "Loading Docker image..."
@@ -97,7 +97,7 @@ jobs:
         docker run -d \
           --name linkedrite \
           --restart always \
-          -p 8000:8000 \
+          -p 8009:8000 \
           -v linkedrite_data:/app/data \
           -v linkedrite_media:/app/media \
           -v linkedrite_static:/app/staticfiles \
@@ -117,8 +117,8 @@ jobs:
           docker logs --tail=50 linkedrite
           
           # Test if application responds
-          if curl -f -s -o /dev/null -w "%{http_code}" http://localhost:8000 | grep -q "200\|302"; then
-            echo "✅ Application is responding on port 8000"
+          if curl -f -s -o /dev/null -w "%{http_code}" http://localhost:8009 | grep -q "200\|302"; then
+            echo "✅ Application is responding on port 8009"
           else
             echo "⚠️  Application might still be starting up..."
           fi
@@ -136,7 +136,7 @@ jobs:
         docker image prune -f
         
         echo "🎉 Deployment completed!"
-        echo "LinkedRite is accessible at http://$(hostname -I | awk '{print $1}'):8000"
+        echo "LinkedRite is accessible at http://$(hostname -I | awk '{print $1}'):8009"
         EOF
         
         chmod +x deploy-simple.sh

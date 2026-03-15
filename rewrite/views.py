@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect
 import os
-from openai import AzureOpenAI
 from dotenv import load_dotenv
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -18,14 +17,28 @@ from datetime import datetime, timedelta
 
 
 load_dotenv(".env")
-api_key = os.getenv("AZURE_OPENAI_API_KEY")
-api_version = os.getenv("API_VERSION")
-azure_endpoint = os.getenv("AZURE_API_ENDPOINT")
-deployment_name = os.getenv("DEPLOYMENT_MODEL")
 
-client = AzureOpenAI(
-    api_key=api_key, api_version=api_version, azure_endpoint=azure_endpoint
-)
+AI_PROVIDER = os.getenv("AI_PROVIDER", "google").lower()
+
+if AI_PROVIDER == "azure":
+    from openai import AzureOpenAI
+
+    api_key = os.getenv("AZURE_OPENAI_API_KEY")
+    api_version = os.getenv("API_VERSION")
+    azure_endpoint = os.getenv("AZURE_API_ENDPOINT")
+    deployment_name = os.getenv("DEPLOYMENT_MODEL")
+
+    client = AzureOpenAI(
+        api_key=api_key, api_version=api_version, azure_endpoint=azure_endpoint
+    )
+elif AI_PROVIDER == "google":
+    from google import genai
+    from google.genai.types import GenerateContentConfig
+
+    google_client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
+    google_model = os.getenv("GOOGLE_MODEL", "gemini-3-flash-preview")
+else:
+    raise ValueError(f"Unsupported AI_PROVIDER: {AI_PROVIDER}. Use 'azure' or 'google'.")
 
 
 # Create your views here.
@@ -94,13 +107,18 @@ def index(request):
 @throttle_classes([UserRateThrottle])
 class RewriteAPI(APIView):
     def post(self, request):
-        # Check if user is authenticated
         if not request.user.is_authenticated:
             return Response(
                 {"success": False, "message": "Please login to use this service."},
                 status=401,
             )
-        
+
+        if not request.user.email_verified:
+            return Response(
+                {"success": False, "message": "Please verify your email address before using this service."},
+                status=403,
+            )
+
         # Check usage limits
         usage = UsageTracking.get_or_create_today(request.user)
         if not usage.can_use():
@@ -160,15 +178,9 @@ class RewriteAPI(APIView):
 
         # print("Prompt:", prompt)
 
-        messages = [
-            {
-                "role": "system",
-                "content": "You are an expert LinkedIn content writer who creates engaging, professional content with correct grammar.",
-            },
-            {
-                "role": "user",
-                "content": f"""
-        Rewrite the following LinkedIn post according to these guidelines:
+        system_instruction = "You are an expert LinkedIn content writer who creates engaging, professional content with correct grammar."
+
+        user_prompt = f"""Rewrite the following LinkedIn post according to these guidelines:
         - Maintain the original number of paragraphs and overall format
         - Use professional tone and indirect speech
         - Make the content clear, precise, and engaging
@@ -177,31 +189,39 @@ class RewriteAPI(APIView):
         {"- Add relevant hashtags to increase visibility" if data["htagNeeded"] else "- Do not include hashtags"}
 
         Original post:
-        {data["postInput"]}
-        """,
-            },
-        ]
+        {data["postInput"]}"""
 
-        response = client.chat.completions.create(
-            messages=messages,
-            model=deployment_name,
-            max_tokens=1000,
-            temperature=0.7,  # adding temperature to introduce creativity
-            response_format={"type": "text"},
-        )
-        # print("Answer", response.choices[0].message.content)
-        # removing starting and ending blank lines
-        response.choices[0].message.content = response.choices[
-            0
-        ].message.content.strip()
-        
-        # Increment usage count
+        if AI_PROVIDER == "azure":
+            chat_messages = [
+                {"role": "system", "content": system_instruction},
+                {"role": "user", "content": user_prompt},
+            ]
+            response = client.chat.completions.create(
+                messages=chat_messages,
+                model=deployment_name,
+                max_tokens=1000,
+                temperature=0.7,
+                response_format={"type": "text"},
+            )
+            rewritten_text = response.choices[0].message.content.strip()
+        else:
+            response = google_client.models.generate_content(
+                model=google_model,
+                contents=user_prompt,
+                config=GenerateContentConfig(
+                    system_instruction=system_instruction,
+                    max_output_tokens=1000,
+                    temperature=0.7,
+                ),
+            )
+            rewritten_text = response.text.strip()
+
         usage.increment()
 
         return Response(
             {
-                "success": True, 
-                "rewriteAI": response.choices[0].message.content,
+                "success": True,
+                "rewriteAI": rewritten_text,
                 "usage": {
                     "used": usage.count,
                     "limit": usage.user.subscription.get_daily_limit() if hasattr(usage.user, 'subscription') else 20,
