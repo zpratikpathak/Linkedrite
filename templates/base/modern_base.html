@@ -103,7 +103,7 @@
             <div class="flex justify-between h-16">
                 <!-- Logo and Desktop Navigation -->
                 <div class="flex items-center">
-                    <a href="{% url 'rewrite:index' %}" class="flex items-center space-x-2">
+                    <a href="{% url 'posts:dashboard' %}" class="flex items-center space-x-2">
                         <div class="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
@@ -114,12 +114,13 @@
                     
                     <!-- Desktop Menu -->
                     <div class="hidden md:flex items-center space-x-8 ml-10">
-                        <a href="{% url 'rewrite:index' %}" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Home</a>
+                        <a href="{% url 'posts:dashboard' %}" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Dashboard</a>
                         {% if user.is_authenticated %}
-                        <a href="{% url 'rewrite:dashboard' %}" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Dashboard</a>
+                        <a href="{% url 'posts:create' %}" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Compose</a>
+                        <a href="{% url 'posts:list' %}" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Posts</a>
+                        <a href="{% url 'posts:calendar' %}" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Calendar</a>
+                        <a href="{% url 'linkedin:accounts' %}" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Accounts</a>
                         {% endif %}
-                        <a href="{% url 'rewrite:pricing' %}" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Pricing</a>
-                        <a href="#features" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Features</a>
                     </div>
                 </div>
                 
@@ -158,7 +159,7 @@
                                     {% endif %}
                                 </p>
                             </div>
-                            <a href="{% url 'rewrite:dashboard' %}" class="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">Dashboard</a>
+                            <a href="{% url 'posts:dashboard' %}" class="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">Dashboard</a>
                             <a href="{% url 'accounts:profile' %}" class="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">Profile</a>
                             <hr class="border-gray-200 dark:border-gray-700">
                             <a href="{% url 'accounts:logout' %}" class="block px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700">Logout</a>
@@ -184,12 +185,13 @@
             <!-- Mobile Menu -->
             <div x-show="mobileMenuOpen" x-transition class="md:hidden border-t border-gray-200 dark:border-gray-800" x-cloak>
                 <div class="px-2 pt-2 pb-3 space-y-1">
-                    <a href="{% url 'rewrite:index' %}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">Home</a>
+                    <a href="{% url 'posts:dashboard' %}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">Dashboard</a>
                     {% if user.is_authenticated %}
-                    <a href="{% url 'rewrite:dashboard' %}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">Dashboard</a>
+                    <a href="{% url 'posts:create' %}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">Compose</a>
+                    <a href="{% url 'posts:list' %}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">Posts</a>
+                    <a href="{% url 'posts:calendar' %}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">Calendar</a>
+                    <a href="{% url 'linkedin:accounts' %}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">Accounts</a>
                     {% endif %}
-                    <a href="{% url 'rewrite:pricing' %}" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">Pricing</a>
-                    <a href="#features" class="block px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">Features</a>
                 </div>
             </div>
         </div>
@@ -270,7 +272,7 @@
                     <h3 class="font-semibold mb-4">Product</h3>
                     <ul class="space-y-2 text-sm">
                         <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Features</a></li>
-                        <li><a href="{% url 'rewrite:pricing' %}" class="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Pricing</a></li>
+                        <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Pricing</a></li>
                         <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">API</a></li>
                         <li><a href="#" class="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Integrations</a></li>
                     </ul>

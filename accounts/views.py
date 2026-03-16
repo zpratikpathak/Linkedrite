@@ -18,7 +18,7 @@ from subscriptions.models import Subscription, SubscriptionPlan
 
 def signup_view(request):
     if request.user.is_authenticated:
-        return redirect('rewrite:dashboard')
+        return redirect('posts:dashboard')
     
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -66,7 +66,7 @@ def signup_view(request):
 
 def login_view(request):
     if request.user.is_authenticated:
-        return redirect('rewrite:dashboard')
+        return redirect('posts:dashboard')
     
     if request.method == 'POST':
         form = CustomAuthenticationForm(request, data=request.POST)
@@ -75,7 +75,7 @@ def login_view(request):
             login(request, user)
             
             # Redirect to next URL or dashboard
-            next_url = request.GET.get('next', 'rewrite:dashboard')
+            next_url = request.GET.get('next', 'posts:dashboard')
             return redirect(next_url)
     else:
         form = CustomAuthenticationForm()
@@ -87,13 +87,13 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     messages.success(request, 'You have been logged out successfully.')
-    return redirect('rewrite:index')
+    return redirect('posts:dashboard')
 
 
 @login_required
 def verify_email_required(request):
     if request.user.email_verified:
-        return redirect('rewrite:dashboard')
+        return redirect('posts:dashboard')
     return render(request, 'accounts/verify_email_required.html')
 
 
@@ -111,19 +111,19 @@ def verify_email(request, token):
         messages.success(request, 'Your email has been verified successfully!')
         
         if request.user.is_authenticated:
-            return redirect('rewrite:dashboard')
+            return redirect('posts:dashboard')
         else:
             return redirect('accounts:login')
     else:
         messages.error(request, 'This verification link has expired or has already been used.')
-        return redirect('rewrite:index')
+        return redirect('posts:dashboard')
 
 
 @login_required
 def resend_verification(request):
     if request.user.email_verified:
         messages.info(request, 'Your email is already verified.')
-        return redirect('rewrite:dashboard')
+        return redirect('posts:dashboard')
     
     # Invalidate old tokens
     EmailVerificationToken.objects.filter(

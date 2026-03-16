@@ -13,6 +13,7 @@ media/
 # Secret keys
 *.env
 
+
 # Development files
 *.log
 db.sqlite3

@@ -1,0 +1,109 @@
+{% extends "base/modern_base.html" %}
+
+{% block title %}Post Detail - LinkedRite{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Back link -->
+    <a href="{% url 'posts:list' %}" class="inline-flex items-center text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 mb-6">
+        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+        Back to Posts
+    </a>
+
+    <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <!-- Status Header -->
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between
+            {% if post.status == 'published' %}bg-green-50 dark:bg-green-900/10
+            {% elif post.status == 'scheduled' %}bg-amber-50 dark:bg-amber-900/10
+            {% elif post.status == 'failed' %}bg-red-50 dark:bg-red-900/10
+            {% else %}bg-gray-50 dark:bg-gray-750{% endif %}">
+            <div class="flex items-center space-x-3">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+                    {% if post.status == 'published' %}bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400
+                    {% elif post.status == 'scheduled' %}bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400
+                    {% elif post.status == 'failed' %}bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400
+                    {% elif post.status == 'publishing' %}bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400
+                    {% else %}bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300{% endif %}">
+                    {{ post.get_status_display }}
+                </span>
+                {% if post.linkedin_account %}
+                <span class="text-sm text-gray-600 dark:text-gray-400">{{ post.linkedin_account.display_name }}</span>
+                {% endif %}
+            </div>
+            <div class="flex items-center space-x-2">
+                {% if post.status != 'published' %}
+                <a href="{% url 'posts:edit' post.id %}" class="inline-flex items-center px-3 py-1.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
+                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                    Edit
+                </a>
+                <form method="post" action="{% url 'posts:delete' post.id %}" onsubmit="return confirm('Delete this post?')">
+                    {% csrf_token %}
+                    <button type="submit" class="inline-flex items-center px-3 py-1.5 bg-white dark:bg-gray-700 border border-red-300 dark:border-red-600 text-red-600 dark:text-red-400 rounded-lg text-sm font-medium hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        Delete
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="p-6">
+            <div class="prose dark:prose-invert max-w-none">
+                <p class="whitespace-pre-line text-gray-900 dark:text-gray-100 leading-relaxed">{{ post.content }}</p>
+            </div>
+
+            {% if post.images.exists %}
+            <div class="mt-6">
+                {% for image in post.images.all %}
+                <div class="relative">
+                    <img src="{{ image.image.url }}" alt="{{ image.alt_text }}" class="w-full rounded-lg max-h-96 object-cover">
+                    {% if image.is_ai_generated %}
+                    <span class="absolute top-2 left-2 px-2 py-0.5 bg-purple-600 text-white text-xs rounded-full">AI Generated</span>
+                    {% endif %}
+                    {% if image.alt_text %}
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Alt: {{ image.alt_text }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Metadata -->
+        <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-750">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                <div>
+                    <p class="text-gray-500 dark:text-gray-400">Created</p>
+                    <p class="font-medium">{{ post.created_at|date:"M d, Y H:i" }}</p>
+                </div>
+                {% if post.scheduled_at %}
+                <div>
+                    <p class="text-gray-500 dark:text-gray-400">Scheduled for</p>
+                    <p class="font-medium">{{ post.scheduled_at|date:"M d, Y H:i" }}</p>
+                </div>
+                {% endif %}
+                {% if post.published_at %}
+                <div>
+                    <p class="text-gray-500 dark:text-gray-400">Published</p>
+                    <p class="font-medium">{{ post.published_at|date:"M d, Y H:i" }}</p>
+                </div>
+                {% endif %}
+                {% if post.linkedin_post_id %}
+                <div>
+                    <p class="text-gray-500 dark:text-gray-400">LinkedIn Post ID</p>
+                    <p class="font-medium text-xs break-all">{{ post.linkedin_post_id }}</p>
+                </div>
+                {% endif %}
+            </div>
+
+            {% if post.error_message %}
+            <div class="mt-4 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
+                <p class="text-sm text-red-800 dark:text-red-300 font-medium mb-1">Error Details</p>
+                <p class="text-sm text-red-700 dark:text-red-400">{{ post.error_message }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

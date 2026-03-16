@@ -32,7 +32,39 @@ services:
     ports:
       - "5432:5432"
 
-  # Redis cache (optional - comment out if not using Redis)
+  # Celery worker for async tasks (publishing posts)
+  celery_worker:
+    build: .
+    command: celery -A Linkedrite worker -l info
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/linkedrite
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/1
+    volumes:
+      - ./media:/app/media
+    depends_on:
+      - db
+      - redis
+    restart: unless-stopped
+
+  # Celery beat for periodic tasks (scheduled post publishing)
+  celery_beat:
+    build: .
+    command: celery -A Linkedrite beat -l info
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/linkedrite
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/1
+    depends_on:
+      - db
+      - redis
+    restart: unless-stopped
+
+  # Redis cache and Celery broker
   redis:
     image: redis:7-alpine
     ports:

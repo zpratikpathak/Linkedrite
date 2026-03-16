@@ -13,8 +13,6 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="{% static 'rewrite/style.css' %}">
     
     {% block extra_css %}{% endblock %}
 </head>
@@ -22,7 +20,7 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'rewrite:index' %}">
+            <a class="navbar-brand" href="{% url 'posts:dashboard' %}">
                 <i class="fas fa-pen-fancy"></i> LinkedRite
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -31,16 +29,16 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'rewrite:index' %}">Home</a>
+                        <a class="nav-link" href="{% url 'posts:dashboard' %}">Dashboard</a>
                     </li>
                     {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'rewrite:dashboard' %}">Dashboard</a>
+                        <a class="nav-link" href="{% url 'posts:list' %}">Posts</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'linkedin:accounts' %}">Accounts</a>
                     </li>
                     {% endif %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'rewrite:pricing' %}">Pricing</a>
-                    </li>
                 </ul>
                 <ul class="navbar-nav">
                     {% if user.is_authenticated %}
@@ -49,7 +47,7 @@
                             <i class="fas fa-user-circle"></i> {{ user.first_name|default:user.email }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="{% url 'rewrite:dashboard' %}">Dashboard</a></li>
+                            <li><a class="dropdown-item" href="{% url 'posts:dashboard' %}">Dashboard</a></li>
                             <li><a class="dropdown-item" href="{% url 'accounts:profile' %}">Profile</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{% url 'accounts:logout' %}">Logout</a></li>
