@@ -29,6 +29,8 @@ jobs:
             depends_on:
               - db
               - redis
+            volumes:
+              - media_data:/app/media
             networks:
               - linkedrite-network
             healthcheck:
@@ -70,6 +72,32 @@ jobs:
               interval: 10s
               timeout: 5s
               retries: 5
+
+          celery_worker:
+            image: linkedrite:latest
+            restart: always
+            command: celery -A Linkedrite worker -l info
+            env_file:
+              - .env
+            depends_on:
+              - db
+              - redis
+            volumes:
+              - media_data:/app/media
+            networks:
+              - linkedrite-network
+
+          celery_beat:
+            image: linkedrite:latest
+            restart: always
+            command: celery -A Linkedrite beat -l info
+            env_file:
+              - .env
+            depends_on:
+              - db
+              - redis
+            networks:
+              - linkedrite-network
         
         networks:
           linkedrite-network:
@@ -78,6 +106,7 @@ jobs:
         volumes:
           postgres_data:
           redis_data:
+          media_data:
         EOF
 
     - name: Build Docker image
