@@ -25,4 +25,5 @@ dependencies = [
     "psycopg2-binary>=2.9.0",
     "redis>=5.0.0",
     "django-redis>=5.4.0",
+    "pratikpathak>=2.3.5",
 ]
