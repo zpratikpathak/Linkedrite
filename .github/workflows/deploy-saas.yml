@@ -3,7 +3,7 @@ name: Deploy LinkedRite SaaS
 on:
   push:
     branches:
-      - master
+      - auto-linkedin
 
 jobs:
   build-and-deploy:
